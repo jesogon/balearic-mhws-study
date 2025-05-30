@@ -1,0 +1,11 @@
+.vscode
+
+Datos/*/**
+!Datos/*/*.md
+
+Figuras/*
+merge previous commits
+Codigos/pyscripts/marineHeatWaves copy.py
+Codigos/extra
+
+**/__pycache__/
