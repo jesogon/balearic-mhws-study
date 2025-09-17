@@ -1,3 +1,16 @@
+########################################################################################################################
+##################################### USER NOTES #######################################################################
+########################################################################################################################
+
+"""
+Modified version of the *marineHeatWaves* module for python developped by Eric C. J. Oliver
+(see https://github.com/ecjoliver/marineHeatWaves), under GPLv3 license.
+"""
+
+########################################################################################################################
+##################################### CODE #############################################################################
+########################################################################################################################
+
 '''
 
     A set of functions which implement the Marine Heat Wave (MHW)
@@ -14,7 +27,7 @@ import scipy.ndimage as ndimage
 from datetime import date
 
 
-def detect(t, temp, climatologyPeriod=[None,None], pctile=90, windowHalfWidth=5, smoothPercentile=True, smoothPercentileWidth=31, minDuration=5, joinAcrossGaps=True, maxGap=2, maxPadLength=False, coldSpells=False, alternateClimatology=False, Ly=False):
+def detect(t, temp, climatologyPeriod=[None,None], pctile=90, windowHalfWidth=5, smoothPercentile=True, smoothPercentileWidth=31, minDuration=5, joinAcrossGaps=True, maxGap=2, maxPadLength=False, coldSpells=False, alternateClimatology=False, Ly=False, cutMhwEventsByYear=False):
     '''
 
     Applies the Hobday et al. (2016) marine heat wave definition to an input time
@@ -176,6 +189,13 @@ def detect(t, temp, climatologyPeriod=[None,None], pctile=90, windowHalfWidth=5,
     mhw['category'] = []
     mhw['rate_onset'] = [] # [deg C / day]
     mhw['rate_decline'] = [] # [deg C / day]
+
+    ## MODIFICATION : Add severity metrics
+    mhw['severity_max'] = []
+    mhw['severity_mean'] = []
+    mhw['severity_var'] = []
+    mhw['severity_cumulative'] = []
+    ## END OF MODIFICATION
 
     #
     # Time and dates vectors
@@ -344,6 +364,42 @@ def detect(t, temp, climatologyPeriod=[None,None], pctile=90, windowHalfWidth=5,
                 if len(gaps) == 0:
                     break
 
+    ## MODIFICATION : Option to cut events between 31st December and 1st January
+
+    if cutMhwEventsByYear:
+        def ordinal_time(year, month, day):
+            return date(year, month, day).toordinal()
+
+        ev = 0
+
+        # If event is spanning on multiple years, split it
+        while ev < len(mhw['time_start']):
+            year_start = date.fromordinal(mhw['time_start'][ev]).year
+            year_end = date.fromordinal(mhw['time_end'][ev]).year
+            
+            # Event spanning on multiple years
+            if year_start < year_end:
+                # Splitting the event in two parts
+                #  -> Ending this event on 31 December of its starting year
+                #  -> Starting the second part on 1 January of the year after
+                # The second part will be investigated on next iteration
+                new_end_time = ordinal_time(year_start, 12, 31)
+                next_start_time = ordinal_time(year_start+1, 1, 1)
+
+                # If missing values, takes the nearest available value
+                if not new_end_time in t:
+                    new_end_time = t[np.where(t<=new_end_time)[0][-1]]
+                if not next_start_time in t:
+                    next_start_time = t[np.where(t>=next_start_time)[0][0]]
+
+                # Inserting the new end time and the new starting time
+                mhw['time_end'].insert(ev, new_end_time)
+                mhw['time_start'].insert(ev+1, next_start_time)
+            
+            ev += 1
+
+    ## END OF MODIFICATION
+
     # Calculate marine heat wave properties
     mhw['n_events'] = len(mhw['time_start'])
     categories = np.array(['Moderate', 'Strong', 'Severe', 'Extreme'])
@@ -390,6 +446,14 @@ def detect(t, temp, climatologyPeriod=[None,None], pctile=90, windowHalfWidth=5,
         mhw['duration_strong'].append(np.sum(cats == 2.))
         mhw['duration_severe'].append(np.sum(cats == 3.))
         mhw['duration_extreme'].append(np.sum(cats >= 4.))
+
+        ## MODIFICATION : Add severity metrics
+        mhw_severity = (temp_mhw - seas_mhw) / (thresh_mhw - seas_mhw)
+        mhw['severity_max'].append(mhw_severity[tt_peak])
+        mhw['severity_mean'].append(mhw_severity.mean())
+        mhw['severity_var'].append(np.sqrt(mhw_severity.var()))
+        mhw['severity_cumulative'].append(mhw_severity.sum())
+        ## END OF MODIFICATION
         
         # Rates of onset and decline
         # Requires getting MHW strength at "start" and "end" of event (continuous: assume start/end half-day before/after first/last point)
@@ -424,6 +488,8 @@ def detect(t, temp, climatologyPeriod=[None,None], pctile=90, windowHalfWidth=5,
             mhw['intensity_max_abs'][ev] = -1.*mhw['intensity_max_abs'][ev]
             mhw['intensity_mean_abs'][ev] = -1.*mhw['intensity_mean_abs'][ev]
             mhw['intensity_cumulative_abs'][ev] = -1.*mhw['intensity_cumulative_abs'][ev]
+        
+            # TODO : Add severity
 
     return mhw, clim
 
@@ -558,6 +624,17 @@ def blockAverage(t, mhw, clim=None, blockLength=1, removeMissing=False, temp=Non
         mhwBlock['temp_mean'] = np.zeros(nBlocks)
         mhwBlock['temp_max'] = np.zeros(nBlocks)
         mhwBlock['temp_min'] = np.zeros(nBlocks)
+    
+    ## MODIFICATION : Calculate means by days and not by event & Add severity metrics
+    mhwBlock['intensity_mean_byday'] = np.zeros(nBlocks)
+    mhwBlock['severity_max'] = np.zeros(nBlocks)
+    mhwBlock['severity_max_max'] = np.zeros(nBlocks)
+    mhwBlock['severity_mean'] = np.zeros(nBlocks)
+    mhwBlock['severity_mean_byday'] = np.zeros(nBlocks)
+    mhwBlock['severity_cumulative'] = np.zeros(nBlocks)
+    mhwBlock['severity_var'] = np.zeros(nBlocks)
+    mhwBlock['total_scum'] = np.zeros(nBlocks)
+    ## END OF MODIFICATION
 
     # Calculate category days
     if sw_cats:
@@ -611,6 +688,17 @@ def blockAverage(t, mhw, clim=None, blockLength=1, removeMissing=False, temp=Non
         # NOTE: icum for a MHW is assigned to its start year, even if it spans mult. years
         mhwBlock['total_icum'][iBlock] += mhw['intensity_cumulative'][i]
 
+        ## MODIFICATION : Calculate means by days and not by event & Add severity metrics
+        mhwBlock['intensity_mean_byday'][iBlock] += mhw['intensity_mean'][i] * mhw['duration'][i]
+        mhwBlock['severity_max'][iBlock] += mhw['severity_max'][i]
+        mhwBlock['severity_max_max'][iBlock] = np.max([mhwBlock['severity_max_max'][iBlock], mhw['severity_max'][i]])
+        mhwBlock['severity_mean'][iBlock] += mhw['severity_mean'][i]
+        mhwBlock['severity_mean_byday'][iBlock] += mhw['severity_mean'][i] * mhw['duration'][i]
+        mhwBlock['severity_cumulative'][iBlock] += mhw['severity_cumulative'][i]
+        mhwBlock['severity_var'][iBlock] += mhw['severity_var'][i]
+        mhwBlock['total_scum'][iBlock] += mhw['severity_cumulative'][i]
+        ## END OF MODIFICATION
+
     # Calculation of category days
     if sw_cats:
         for i in range(int(nBlocks)):
@@ -637,8 +725,27 @@ def blockAverage(t, mhw, clim=None, blockLength=1, removeMissing=False, temp=Non
     mhwBlock['intensity_var_abs'] = mhwBlock['intensity_var_abs'] / count
     mhwBlock['rate_onset'] = mhwBlock['rate_onset'] / count
     mhwBlock['rate_decline'] = mhwBlock['rate_decline'] / count
+
+    ## MODIFICATION : Add severity metrics
+    mhwBlock['severity_max'] = mhwBlock['severity_max'] / count
+    mhwBlock['severity_mean'] = mhwBlock['severity_mean'] / count
+    mhwBlock['severity_cumulative'] = mhwBlock['severity_cumulative'] / count
+    mhwBlock['severity_var'] = mhwBlock['severity_var'] / count
+    ## END OF MODIFICATION
+
+    ## MODIFICATION : Calculate means by days and not by event
+    total_days = 1.*mhwBlock['total_days']
+    total_days[total_days==0] = np.nan
+    mhwBlock['intensity_mean_byday'] = mhwBlock['intensity_mean_byday'] / total_days
+    mhwBlock['severity_mean_byday'] = mhwBlock['severity_mean_byday'] / total_days
+    ## END OF MODIFICATION
+
     # Replace empty years in intensity_max_max
     mhwBlock['intensity_max_max'][np.isnan(mhwBlock['intensity_max'])] = np.nan
+
+    ## MODIFICATION : Add severity metrics
+    mhwBlock['severity_max_max'][np.isnan(mhwBlock['severity_max_max'])] = np.nan
+    ## END OF MODIFICATION
 
     # Temperature series
     if sw_temp:
@@ -680,6 +787,17 @@ def blockAverage(t, mhw, clim=None, blockLength=1, removeMissing=False, temp=Non
                 mhwBlock['severe_days'][iMissing] = np.nan
                 mhwBlock['extreme_days'][iMissing] = np.nan
             mhwBlock['total_icum'][iMissing] = np.nan
+
+            ## MODIFICATION : Calculate means by days and not by event & Add severity metrics
+            mhwBlock['intensity_mean_byday'][iMissing] = np.nan
+            mhwBlock['severity_max'][iMissing] = np.nan
+            mhwBlock['severity_max_max'][iMissing] = np.nan
+            mhwBlock['severity_mean'][iMissing] = np.nan
+            mhwBlock['severity_mean_byday'][iMissing] = np.nan
+            mhwBlock['severity_cumulative'][iMissing] = np.nan
+            mhwBlock['severity_var'][iMissing] = np.nan
+            mhwBlock['total_scum'][iMissing] = np.nan
+            ## END OF MODIFICATION
 
     return mhwBlock
 
