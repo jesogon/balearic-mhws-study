@@ -46,6 +46,7 @@ import numpy as np
 from geopy.distance import geodesic
 from shapely.geometry import Point, Polygon
 from matplotlib.ticker import MaxNLocator
+import pymannkendall as mk
 
 ########################################################################################################################
 ##################################### CODE #############################################################################
@@ -185,6 +186,36 @@ def apply_regional_mask(
 
     # Print the bad news
     print(f"Region not found {region}")
+
+
+
+def apply_mk_test(y: np.array):
+    """
+    Wrapper function to apply the Mann-Kendall test on a dataset
+
+    Parameters
+    ----------
+    y: np.array
+        A time series.
+
+    Returns
+    ----------
+    h: bool
+        Assess if a trend is present in the time series.
+
+    p: float
+        The p-value of the significance test.
+
+    slope: float
+        The slope of the trend.
+    """
+    
+    if np.isnan(y).all():
+        return np.nan, np.nan, np.nan
+    
+    trend, h, p, z, tau, s, var_s, slope, intercept = mk.hamed_rao_modification_test(y, alpha=0.05)
+    
+    return h, p, slope
 
 
 

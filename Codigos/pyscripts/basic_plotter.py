@@ -9,10 +9,10 @@ This script gather all the functions used to plot figures.
 Functions description
 ----------
     - subplot(...):
-        ...
+        Builds a figure with subplots with matplotlib.
 
     - plot_map(...):
-        .
+        Plots 2D data onto a map.
 
     - plot_transect(...):
         ..
@@ -137,11 +137,7 @@ def subplot(
         show_plots: bool = False,
 ):
     """
-    Build a figure with subplots with matplotlib. The settings for each subplot must
-    be provided as a dictionnary containing the position of the subplot in the figure,
-    the function to be called to plot on the desired axe and all other arguments that 
-    will be passed to the plotting function. Other options of this function are used to
-    define the figure, as well as the optional colorbar.
+    Builds a figure with subplots with matplotlib.
 
     Parameters
     ----------
@@ -152,8 +148,8 @@ def subplot(
         The number of columns in the subplot grid.
 
     subplots_settings: list[dict]
-        A list containing the settings of each subplot. Each subplot
-        setting dictionnary must contain :
+        A list containing the settings of each subplot. Each subplot setting dictionnary
+        must contain :
 
         'pos': the index of the position of the subplot as in the function `plt.subplot()`. 
         'func': the plotting function to plot on the desired axe.
@@ -225,8 +221,6 @@ def subplot(
         
         if fig_vmax is None:
             fig_vmax = np.nanmax([np.nanmax(subplot_setting['data']) for subplot_setting in subplots_settings])
-        
-        print(fig_vmin, fig_vmax)
             
     # Apply fontsize globally
     with plt.rc_context({'font.size': fig_fontsize}):
@@ -361,20 +355,26 @@ def plot_map(
         fontsize: float = 14,
         title: str = "",
         fontsize_title: float = 1.2,
+        ylabel = None,
+        ylabel_pad = -0.22,
+        texts: list[dict] = [],
 
         # Parameters of graph
         extent: list[float] | str | None = "balears",
         aspect: float | None = 1.29, # Best fit
         cmap: str | mcolors.Colormap = 'viridis',
         zero_to_nan: bool = False,
-        contours_levels: int | list[float] = None,
-        contours_labels_fontsize: int = 8,
-        contours_kwargs: dict = {},
         xticks: int | tuple[float, float] | list[float] = None,
         yticks: int | tuple[float, float] | list[float] = None,
         bottom_labels: bool = True,
         left_labels: bool = True,
+        legend: bool | dict = False,
         pcolormesh_kwargs: dict = {},
+
+        # Parameter of contours
+        contours_levels: int | list[float] = None,
+        contours_data = None,
+        contours_kwargs: dict = {},
 
         # Parameter of colorbar
         add_cbar: bool = True,
@@ -384,15 +384,9 @@ def plot_map(
         cbar_pad: float = 0.005,
         cbar_ticks = None,
         cbar_inversed: bool = False,
-        contours_data = None,
         cbar_kwargs: dict = {},
-        vmin=None, vmax=None,
+        vmin = None, vmax = None,
         vlim = None,
-        ylabel = None,
-        ylabel_pad = -0.22,
-        texts: list[dict] = [],
-
-        legend: bool | dict = False,
 
         # Parameter for saving the figure
         save_plot: bool = False,
@@ -506,7 +500,7 @@ def plot_map(
 
         # If the figure is not configured, initialise a new one
         if fig is None:
-            fig = plt.figure(figsize=figsize, dpi=figdpi, layout='tight')
+            fig = plt.figure(figsize=figsize, dpi=figdpi, layout='tight', **fig_kwargs)
         
         # If the axe is not configured, initialise a new one
         if ax is None:
@@ -673,9 +667,6 @@ def plot_transect(
     cbar_inversed: bool=False,
     vmin=None, vmax=None,
 
-    bottom_labels = True,
-    left_labels = True,
-
     # Parameters of graph
     cmap="managua",
     zero_to_nan = False,
@@ -684,6 +675,8 @@ def plot_transect(
     contours_labels_fontsize=8,
     xticks=None,
     yticks=None,
+    bottom_labels = True,
+    left_labels = True,
 
     # Parameter for saving the figure
     save_plot: bool=False,
@@ -1344,9 +1337,6 @@ def plot_timeserie(
     return fig, ax
 
 
-def plot_mhw_timeserie():
-    pass
-
 
 def plot_bars(
         # Parameter of data
@@ -1357,21 +1347,23 @@ def plot_bars(
         colors: dict[str, str] | str = None,
         ls: dict[str, str] | str = None,
         hatch: dict[str, str] | str = None,
-        nans_to_zero: bool = False,
 
         # Parameter of figure
-        fig: plt.Figure | None = None,
-        ax: plt.Axes | None = None,
+        fig: plt.Figure = None,
+        ax: plt.Axes = None,
         figsize: tuple[int, int] = (10, 5),
         figdpi = 100,
 
         # Parameter of text
         fontsize: int = 14,
-        title: str | None = None,
-        xlabel: str | None = None,
+        title: str = None,
+        xlabel: str = None,
+        ylabel: str = None,
+        texts: list[dict] = [],
 
         # Parameters of graph
         grid: bool = True,
+        nans_to_zero: bool = False,
         xlim: tuple[int|None, int|None] = (None, None),
         xticks = None,
         xticks_minor = None,
@@ -1382,9 +1374,7 @@ def plot_bars(
         left_labels = True,
         top_labels = False,
         legend: bool = True,
-        ylabel = None,
         bars_pad = 2,
-        texts: list[dict] = [],
 
         # Parameter for saving the figure
         show_plots: bool = False,
