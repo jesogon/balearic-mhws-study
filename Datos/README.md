@@ -1,26 +1,32 @@
-# *Datos* folder
+# Datos folder
 
-The data here are meant to be used to compute MHW metrics in the Mediterranean Sea. Most of the data used has been provided by the Copernicus Marine Service.
+The data here is meant to be used to compute MHW metrics in the Mediterranean Sea. Most of the data used has been provided by the Copernicus Marine Service.
 
 ## What is in here?
 
  - `bathymetry/` :
-       Bathymetry files, from MEDREA or GEBCO.
+     Bathymetry files, from MEDREA or GEBCO.
 
  - `REP/` :
-       Reprocessed satellite-derived SST over the Mediterranean Sea from 1982 to 2023 provided by Copernicus Marine Service.
+     Reprocessed satellite-derived SST over the Mediterranean Sea from 1982 to 2023 provided by Copernicus Marine Service.
 
  - `MEDREA/` :
-       Physical reanalysis over the Mediterranean Sea from 1987 to 2022 provided by Copernicus Marine Service. For the purpose of the study, only a subset of the data in the Balearic region was used.
+     Physical reanalysis over the Mediterranean Sea from 1987 to 2022 provided by Copernicus Marine Service. For the purpose of the study, only a subset of the data in the Balearic region was used.
 
  - `mhws/` :
-       NetCDF files containing pre-computed MHW metrics, to be used to produce figures.
+     NetCDF files containing pre-computed MHW metrics, to be used to produce figures.
 
-N.B. In the GitHub repository, these folders are empty. To get the data used in the study, please download them online, on the Copernicus Marine Data Store (https://data.marine.copernicus.eu/products), or contact the author.
+*Please note that this code can also be adapted to work with other data.*
+
+## How to download external data?
+
+In the GitHub repository, these folders are empty. To get the data used in the study, please download them online, on the Copernicus Marine Data Store (https://data.marine.copernicus.eu/products), or contact the author.
+
+Detailed information for downloading each dataset can be found in the `README.md` within its respective folder.
 
 ## Datos folders structure
 
-In order to use the codes without any modifications, the Datos folder must be provided using the original folder structure. If the data structure is modified, please modify the `Codigos/pyscripts/load_save_dataset.py` folder paths.
+In order to use the code without any modifications, the Datos folder must be provided using the original folder structure. If the data structure is modified, please modify the `Codigos/pyscripts/load_save_dataset.py` folder paths.
 
 The expected file tree inside the Datos folder should be as follow:
 
@@ -55,4 +61,4 @@ The expected file tree inside the Datos folder should be as follow:
 
 ## Licenses
 
-...
+This work make use of E.U. Copernicus Marine Service Information; https://doi.org/10.48670/moi-00173; https://doi.org/10.25423/CMCC/MEDSEA_MULTIYEAR_PHY_006_004_E3R1, under a permissive license.
