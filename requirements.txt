@@ -1,0 +1,10 @@
+numpy
+xarray
+dask
+pymannkendall
+matplotlib
+geopy
+shapely
+cartopy
+cmocean
+roman # used for some figure labelling

@@ -22,12 +22,8 @@ The code here is meant to compute MHW metrics from temperature data and produce 
 ## How should this code be runned?
 
  1. Make sure to have correctly downloaded the required data, as described in the `README.md` of the Datos folder.
- 2. Make sure to have correctly setup the Python environment to be able to run Python notebooks.
- 3. Make sure to have downloaded all the required packages.
-
- > Run `check_packages.ipynb` to check your Python environment.
-
- 4. Run `mhws_computing.ipynb` to compute MHW datasets (see next sections for more details).
- 5. Run `report_plotting.ipynb` or `presentation_plotting.ipynb` to get the desired figures (see next sections for more details).
+ 2. Make sure to have correctly setup the Python environment by running `check_packages.ipynb`.
+ 3. Run `mhws_computing.ipynb` to compute MHW datasets (see next sections for more details).
+ 4. Run `report_plotting.ipynb` or `presentation_plotting.ipynb` to generate the desired figures.
 
 *Note: Visual Studio Code was used during development, the workflow being thought to integrate easily with it.*

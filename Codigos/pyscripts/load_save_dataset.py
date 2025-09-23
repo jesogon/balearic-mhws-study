@@ -60,10 +60,14 @@ Examples
 # Basic imports
 import os
 import glob as glob
+from typing import Literal, Optional, List, Dict, Tuple
+
 
 # Advanced imports
 import xarray as xr
-from dask.diagnostics import ProgressBar, ResourceProfiler, Profiler, visualize
+from dask.diagnostics.progress import ProgressBar
+from dask.diagnostics.profile import ResourceProfiler, Profiler
+import dask.diagnostics as dask_diag
 
 # Local imports
 # from pyscripts.utils import detrend_dataset
@@ -103,26 +107,37 @@ mhws_dataset_pattern = os.path.join(datos_location, 'mhws', '{type}', '{dataset}
 ########################################################################################################################
 
 
-def load_bathy(source: str = 'MEDREA', drop_vars: list = 'all', region_selector: str | None = 'balears') -> xr.Dataset:
+def load_bathy(
+        source: Literal['GEBCO', 'MEDREA'] = 'MEDREA',
+        drop_vars: str | List[str] = 'all',
+        region_selector: Optional[str] = 'balears'
+) -> xr.Dataset:
     """
     Loads a bathymetry dataset using xarray (either GEBCO or MEDREA).
 
     Parameters
     ----------
-    source: str, default='MEDREA'
-        Source of the bathymetry dataset to load. Can be `'GEBCO'`, `'MEDREA'` or `'MEDREA_MED'`.
+    source : {'GEBCO', 'MEDREA'}, default='MEDREA'
+        Source of the bathymetry dataset to load. Can be `'GEBCO'` or `'MEDREA'`.
 
-    drop_vars: str, default='all'
+    drop_vars : str, default='all'
         Variables of the dataset ot be dropped. If `'all'`, removes all other variables than depth.
 
-    region_selector: str, default='balears', optional
+    region_selector : str, default='balears', optional
         Applies a spatial selector to the dataset. Overrides `lon_selector` and `lat_selector`.
         For now, the only choice is `'balears'`.
     
     Returns
     ----------
-    ds_bathy: xr.Dataset
+    ds_bathy : xarray.Dataset
         The loaded bathymetry dataset.
+      
+    Examples
+    --------
+    >>> from pyscripts.load_save_dataset import load_bathy
+    >>>
+    >>> # Load bathymetry data
+    >>> ds_bathy = load_bathy(source='MEDREA')
     """
 
     if source.lower() == 'gebco':
@@ -179,14 +194,14 @@ def load_bathy(source: str = 'MEDREA', drop_vars: list = 'all', region_selector:
 
 def load_rep(
         # Time preselection
-        years: list[int] = range(1982, 2024),
-        months: list[int] = range(1, 13),
+        years: List[int] | range = range(1982, 2024),
+        months: List[int] | range = range(1, 13),
 
         # Selectors
-        time_selector: str | slice | None = None,
-        lon_selector: float | slice | None = None,
-        lat_selector: float | slice | None = None,
-        region_selector: str | None = 'balears',
+        time_selector: Optional[str | slice] = None,
+        lon_selector: Optional[float | slice] = None,
+        lat_selector: Optional[float | slice] = None,
+        region_selector: Optional[str] = 'balears',
         
         # Dataset options
         # chunks: int | dict | str | None = 'auto',
@@ -198,36 +213,36 @@ def load_rep(
 
     Parameters
     ----------
-    years: list[int], default=range(1982, 2024)
+    years : list[int] | range, default=range(1982, 2024)
         Years to load from the dataset, as integers (e.g., `range(1983, 1985)` or `[1983]`).
         Use `['*']` to load all available years (1982-2023) as it uses a glob pattern.
         This parameter defines the files to load, so loading time is highly depends on this range size.
     
-    months: list[int | str], default=range(1, 13)
+    months : list[int] | range, default=range(1, 13)
         Months to load from the dataset, as integers (e.g., `range(1, 5)` or `[1]`).
         Use `['*']` to load all months (1-12) as it uses a glob pattern.
         This parameter defines the files to load, so loading time is highly depends on this range size.
     
-    time_selector: str | slice[str], optional
+    time_selector : str | slice[str], optional
         Time selection applied using xarray's `.sel()`. Can be a string (e.g., `'1993-01-21'`) or a slice
         (e.g., `slice('1993-01-21', '1993-01-25')`). If `None`, no time filtering is applied.
     
-    lon_selector: float | slice[float], optional
+    lon_selector : float | slice[float], optional
         Longitude selector applied using xarray's `.sel()`. Accepts a float or a slice.
     
-    lat_selector: float | slice[float], optional
+    lat_selector : float | slice[float], optional
         Latitude selector applied using xarray's `.sel()`. Accepts a float or a slice.
     
-    region_selector: str, default='balears', optional
+    region_selector : str, default='balears', optional
         Applies a spatial selector to the dataset. Overrides `lon_selector` and `lat_selector`.
         For now, the only choice is `'balears'`.
     
-    only_sst: bool, default=True
+    only_sst : bool, default=True
         If `True`, all other variables than SST will be discarded.
     
     Returns
     ----------
-    ds_rep: xr.Dataset
+    ds_rep : xarray.Dataset
         The REP dataset.
     """
 
@@ -304,24 +319,24 @@ def load_rep(
 
 def load_medrea(
         # Time preselection
-        years: list[int|str] = range(1987, 2023),
-        months: list[int|str] = range(1, 13),
+        years: List[int] | range = range(1987, 2023),
+        months: List[int] | range = range(1, 13),
 
         # Selectors
-        time_selector: str|slice|None = None,
-        lon_selector: float|slice|None = None,
-        lat_selector: float|slice|None = None,
-        depth_selector: float|slice|None = slice(0, 3000), # Should not remove any data in the study region
-        region_selector: str | None = 'balears',
+        time_selector: Optional[str | slice] = None,
+        lon_selector: Optional[float | slice] = None,
+        lat_selector: Optional[float | slice] = None,
+        depth_selector: Optional[float | slice] = slice(0, 3000), # Should not remove any data in the study region
+        region_selector: Optional[str] = 'balears',
 
         # Dataset options
         move_to_0am: bool = True,
         only_botT: bool = False,
         # detrended: bool = False,
 
-        drop_vars: list = [],
+        drop_vars: List[str] = [],
         
-        chunks: int | dict | str | None = 'auto',
+        chunks: Optional[int | Dict[str, str] | str] = 'auto',
 ) -> xr.Dataset:
     """
     Loads the MEDREA dataset using xarray. By default, the entire dataset is loaded, but optional spatio-temporal subsettings are available
@@ -329,32 +344,32 @@ def load_medrea(
 
     Parameters
     ----------
-    years: list[int|str], default=['*']
+    years : list[int|str], default=['*']
         Years to load from the dataset, as integers or strings (e.g., range(1993, 1995) or ['1993']).
         Use ['*'] to load all available years (1987-2022) as it uses a glob pattern.
     
-    months: list[int|str], default=['*']
+    months : list[int|str], default=['*']
         Months to load from the dataset, as integers or strings (e.g., range(1, 5) or ['1']).
         Use ['*'] to load all months (1-12) as it uses a glob pattern.
     
-    time_selector: str | slice[str], optional
+    time_selector : str | slice[str], optional
         Time selection applied using xarray's `.sel()`. Can be a string (e.g., '1993-01-21') or a slice
         (e.g., slice('1993-01-21', '1993-01-25')). If None, no time filtering is applied.
     
-    lon_selector: float | slice[float], optional
+    lon_selector : float | slice[float], optional
         Longitude selector applied using xarray's `.sel()`. Accepts a float or a slice. If None, no longitude filtering is applied.
     
-    lat_selector: float | slice[float], optional
+    lat_selector : float | slice[float], optional
         Latitude selector applied using xarray's `.sel()`. Accepts a float or a slice. If None, no latitude filtering is applied.
     
-    depth_selector: float | slice[float], default=slice(0, 3000), optional
+    depth_selector : float | slice[float], default=slice(0, 3000), optional
         Depth selector applied using xarray's `.sel()`. Accepts a float or a slice. If None, no depth filtering is applied.
     
-    region_selector: str, default='balears', optional
+    region_selector : str, default='balears', optional
         Applies a spatial selector to the dataset. Overrides `lon_selector` and `lat_selector`.
         For now, the only choice is `'balears'`.
     
-    chunks: int | dict | 'auto', default='auto', optional
+    chunks : int | dict | 'auto', default='auto', optional
         xarray parameter.
         Dictionary with keys given by dimension names and values given by chunk sizes.
         In general, these should divide the dimensions of each dataset. If int, chunk
@@ -363,7 +378,7 @@ def load_medrea(
     
     Returns
     ----------
-    ds_medrea: xr.Dataset
+    ds_medrea : xarray.Dataset
         The loaded MEDREA dataset with optional spatio-temporal subsetting.
     """
 
@@ -462,7 +477,7 @@ def save_mhws_dataset(
         dataset_used: str,
         detrended: bool = False,
         region: str = 'balears',
-        clim_period: tuple[int, int] = (1987, 2021),
+        clim_period: Tuple[int, int] = (1987, 2021),
 
         # Options
         progress_bar: bool = True,
@@ -473,31 +488,31 @@ def save_mhws_dataset(
 
     Parameters
     ----------
-    ds_mhws: xr.Dataset
+    ds_mhws : xarray.Dataset
         MHWs dataset to save.
 
-    ds_type: str
+    ds_type : str
         Can be 'yearly' or 'all_events'.
 
-    dataset_used: str 
+    dataset_used : str 
         Describes the dataset from which the MHWs computations were performed.
         Can be `'rep'`, `'medrea_bot'` or `'medrea_50m'` for example.
 
-    region: str, default='balears'
+    region : str, default='balears'
         Region in which the MHWs computations were performed. Can be `'balears'` or `'med'` for example.
 
-    clim_period: tuple[int, int], default=(1987,2021)
+    clim_period : tuple[int, int], default=(1987,2021)
         Climatology period used for the MHWs computations.
     
-    progress_bar: bool, default=True
+    progress_bar : bool, default=True
         If `True`, shows a progress bar when saving the dataset.
     
-    profilers: bool, default=True
+    profilers : bool, default=True
         If `True`, shows the profilers after the dataset has been saved.
     
     Returns
     ----------
-    ds_mhws: xr.Dataset
+    ds_mhws : xarray.Dataset
         The computed MHWs dataset.
     """
     
@@ -536,29 +551,29 @@ def load_mhws_dataset(
         dataset_used: str,
         detrended: bool = False,
         region: str = 'balears',
-        clim_period: tuple[int, int] = (1987, 2021),
+        clim_period: Tuple[int, int] = (1987, 2021),
 ) -> xr.Dataset:
     """
     Loads a MHWs dataset using xarray.
 
     Parameters
     ----------
-    ds_type: str
+    ds_type : str
         Can be 'yearly' or 'all_events'.
     
-    dataset_used: str 
+    dataset_used : str 
         Describes the dataset from which the MHWs computations were performed.
         Can be `'rep'`, `'medrea_bot'` or `'medrea_50m'` for example.
 
-    region: str, default='balears'
+    region : str, default='balears'
         Region in which the MHWs computations were performed. Can be `'balears'` or `'med'` for example.
 
-    clim_period: tuple[int, int], default=(1987,2021)
+    clim_period : tuple[int, int], default=(1987,2021)
         Climatology period used for the MHWs computations.
     
     Returns
     ----------
-    ds_mhws: xr.Dataset
+    ds_mhws : xarray.Dataset
         The loaded MHWs dataset.
     """
 
@@ -600,21 +615,21 @@ def save_dataset_to_nc(
 
     Parameters
     ----------
-    ds: xr.Dataset
+    ds : xarray.Dataset
         Dataset to save.
 
-    file_path: str 
+    file_path : str 
         Filepath where the dataset should be saved.
     
-    progress_bar: bool, default=True
+    progress_bar : bool, default=True
         If `True`, shows a progress bar when saving the dataset.
     
-    profilers: bool, default=True
+    profilers : bool, default=True
         If `True`, shows the profilers after the dataset has been saved.
     
     Returns
     ----------
-    ds: xr.Dataset
+    ds : xarray.Dataset
         The computed dataset.
     """
 
@@ -633,7 +648,7 @@ def save_dataset_to_nc(
         # Save resource profiles as html file
         from datetime import datetime
         path = os.path.join(codigos_location, '.dask_profiles', datetime.now().isoformat() + '.html')
-        visualize([prof, rprof], path, show=True, save=True)
+        dask_diag.visualize([prof, rprof], path, show=True, save=True)
 
     # Compute the dataset using no visualisation tools
     else:
@@ -647,9 +662,9 @@ def save_dataset_to_nc(
 
 def load_nc_to_dataset(
         file_path: str,
-        name_dict: dict = None,
+        name_dict: Optional[Dict[str, str]] = None,
         remove_bay_of_biscay: bool = False,
-        region_selector: str | None = None,
+        region_selector: Optional[str] = None,
         **kwargs
 ) -> xr.Dataset:
     """
@@ -657,22 +672,22 @@ def load_nc_to_dataset(
 
     Parameters
     ----------
-    file_path: str 
+    file_path : str 
         Filepath from where the dataset should be loaded.
 
-    remove_bay_of_biscay: bool, default=True
+    remove_bay_of_biscay : bool, default=True
         If `True`, all the values of the dataset in the bay of biscay is discarded.
         Note that the coordinates must be named `lon` and `lat` for it to work.
     
     Returns
     ----------
-    ds: xr.Dataset
+    ds : xarray.Dataset
         The loaded dataset.
     
     Other Parameters
     ----------------
     **kwargs
-        All other arguments are passed to `xr.open_dataset`
+        All other arguments are passed to `xarray.open_dataset`
     """
 
     # Loading the dataset

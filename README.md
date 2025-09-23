@@ -7,13 +7,13 @@ Please note that the repository is not in its final state. Modifications for enh
 ## What is in here?
 
  - `Codigos/` :
-     Code used to compute MHW metrics and produce figures from them.
+    Code used to compute MHW metrics and produce figures from them.
 
  - `Datos/` :
-     Data used by the code (namely, temperature and bathymetry data).
+    Data used by the code (namely, temperature and bathymetry data). Those files are not included to the GitHub repository.
 
  - `Documentos/` :
-     Folder containing the original master thesis report and presentation using the code herein.
+    Folder containing the original master thesis report and presentation using the code herein.
 
 ## How should this code be runned?
 
