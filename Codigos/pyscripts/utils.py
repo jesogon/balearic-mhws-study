@@ -39,10 +39,12 @@ Functions description
 
 # Basic imports
 import copy
+from typing import Literal, Optional, List, Dict, Tuple, Any
 
 # Advanced imports
 import xarray as xr
 import numpy as np
+from numpy.typing import NDArray
 from geopy.distance import geodesic
 from shapely.geometry import Point, Polygon
 from matplotlib.ticker import MaxNLocator
@@ -189,13 +191,13 @@ def apply_regional_mask(
 
 
 
-def apply_mk_test(y: np.array):
+def apply_mk_test(y: NDArray):
     """
     Wrapper function to apply the Mann-Kendall test on a dataset
 
     Parameters
     ----------
-    y: np.array
+    y: numpy.array
         A time series.
 
     Returns
@@ -221,8 +223,8 @@ def apply_mk_test(y: np.array):
 
 def extract_transect(
         ds: xr.Dataset | xr.DataArray,
-        pos0: tuple[float, float],
-        pos1: tuple[float, float]
+        pos0: Tuple[float, float],
+        pos1: Tuple[float, float]
 ) -> xr.Dataset:
     """
     Extract a transect from a dataset.
@@ -327,6 +329,8 @@ def lon_to_str(
     # Save precision as string pattern
     precision = f":.{precision}f" if not precision is None else ''
 
+    suffix = ''
+
     # Get suffix
     if axis == 'lon':
         suffix = 'W' if value < 0 else '' if value == 0 else 'E'
@@ -334,17 +338,17 @@ def lon_to_str(
         suffix = 'S' if value < 0 else '' if value == 0 else 'N'
 
     # Final pattern
-    pattern = "{value" + precision + "}°{suffix}"
+    pattern = "{value" + str(precision) + "}°{suffix}"
 
     # Finally apply pattern to obtain final string
     return pattern.format(value=abs(value), suffix=suffix)
 
 
 def nice_range(
-    vmin: float | None,
-    vmax: float | None,
+    vmin: Optional[float],
+    vmax: Optional[float],
     nbins: int = 10
-) -> tuple[float, float]:
+) -> Tuple[Optional[float], Optional[float]]:
     """
     Uses matplotlib's MaxNLocator to compute nice rounded range and ticks.
     
@@ -384,7 +388,7 @@ def nice_range(
     return ticks[0], ticks[-1] # ticks[1] - ticks[0] is the step
 
 
-def soft_add_values(original: dict, values: dict, inplace: bool = True):
+def soft_add_values(original: Dict, values: Dict, inplace: bool = True):
     """
     Copies the key and value pairs of the `values` dictionnary into the `original` dictionnary.
     If a key exists in both `values` and `original` dictionnary, the one of the `original` dictionnary is kept.
@@ -417,7 +421,7 @@ def soft_add_values(original: dict, values: dict, inplace: bool = True):
     return original
 
 
-def soft_override_value(dict: dict, key, value):
+def soft_override_value(dict: Dict, key: Any, value: Any):
     """
     Add a key and value pair into a dictionnary only if `value` is not `None`.
 
@@ -456,4 +460,4 @@ def bold(text: str) -> str:
     """
     Formats a text to Mathtext bold format.
     """
-    return '\n'.join(r"$\bf{" + word.replace(' ', ' \ ') + "}$" for word in str(text).split('\n'))
+    return '\n'.join(r"$\bf{" + word.replace(' ', ' \\ ') + "}$" for word in str(text).split('\n'))

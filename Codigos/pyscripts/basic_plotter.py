@@ -8,26 +8,26 @@ This script gather all the functions used to plot figures.
 
 Functions description
 ----------
-    - subplot(...):
+    - subplot(nrows, ncols, subplots_settings, ...):
         Builds a figure with subplots with matplotlib.
 
-    - plot_map(...):
-        Plots 2D data onto a map.
+    - plot_map(lon, lat, data, ...):
+        Plots 2D data (lon, lat) onto a map.
 
-    - plot_transect(...):
-        ..
+    - plot_transect(depth, abscissa, data, ...):
+        Plots 2D data (depth, any) onto a transect.
 
-    - plot_vertical_mean(...):
-        ..
+    - plot_vertical_mean(depths, vars, ...):
+        Plots 1D data (depth) as a line plot.
 
-    - plot_timeserie(...):
-        ..
+    - plot_timeserie(times, vars, ...):
+        Plots 1D data (time) as a line plot.
 
-    - add_colorbar(...):
-        ..
+    - plot_bars(depths, vars, ...):
+        Plots 1D data (depth) as a bar plot.
 
-    - get_locator_from_ticks(...):
-        ..
+    - get_locator_from_ticks(ticks, ...):
+        Helper function that return a matplotlib Locator from a giving ticks parameter.
 
       
 Examples
@@ -82,6 +82,9 @@ Examples
 ##################################### IMPORTS ##########################################################################
 ########################################################################################################################
 
+# Basic imports
+from typing import Literal, Optional, List, Dict, Tuple
+
 # Advanced imports
 import numpy as np
 import xarray as xr
@@ -106,26 +109,26 @@ from pyscripts.utils import soft_override_value, soft_add_values
 def subplot(
         # Parameter of subplot
         nrows: int, ncols: int,
-        subplots_settings: list[dict],
-        pad_subplots: tuple[float, float] = None,
+        subplots_settings: List[dict],
+        pad_subplots: Optional[Tuple[float, float]] = None,
 
         # Parameter of figure
-        fig: plt.Figure = None,
-        figsize: tuple[float, float] = None,
-        subplotsize: tuple[float, float] = (7.3, 4.67),
+        fig: Optional[plt.Figure] = None,
+        figsize: Optional[Tuple[float, float]] = None,
+        subplotsize: Tuple[float, float] = (7.3, 4.67),
         figdpi: float = 200,
         fig_fontsize: int = 14,
-        fig_title: str = None,
+        fig_title: Optional[str] = None,
         fig_is_a_map: bool = False,
 
         # Parameter of colorbar
         fig_cbar: bool = False,
         fig_cbar_row: bool = False,
-        fig_vmin: float = None,
-        fig_vmax: float = None,
-        fig_cmap: str = None,
-        fig_cbar_unit: str = None,
-        fig_cbar_ticks: int | tuple[float, float] | list[float] | list[list[float], list[str]] = None,
+        fig_vmin: Optional[float] = None,
+        fig_vmax: Optional[float] = None,
+        fig_cmap: Optional[str] = None,
+        fig_cbar_unit: Optional[str] = None,
+        fig_cbar_ticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
         fig_cbar_orientation: str = 'vertical',
         fig_cbar_pad: float = 0.005,
         fig_cbar_fraction: float = 0.025,
@@ -345,36 +348,36 @@ def plot_map(
         data: xr.DataArray = [[np.nan]],
 
         # Parameter of figure
-        fig: plt.Figure = None,
-        ax: plt.Axes = None,
-        figsize: tuple[int, int] = (10, 6),
-        figdpi = 100,
-        fig_kwargs: dict = {},
+        fig: Optional[plt.Figure] = None,
+        ax: Optional[plt.Axes] = None,
+        figsize: Tuple[int, int] = (10, 6),
+        figdpi: float = 100,
+        fig_kwargs: Dict = {},
 
         # Parameter of text
         fontsize: float = 14,
-        title: str = "",
+        title: Optional[str] = None,
         fontsize_title: float = 1.2,
-        ylabel = None,
-        ylabel_pad = -0.22,
-        texts: list[dict] = [],
+        ylabel: Optional[str] = None,
+        ylabel_pad: float = -0.22,
+        texts: List[dict] = [],
 
         # Parameters of graph
-        extent: list[float] | str | None = "balears",
-        aspect: float | None = 1.29, # Best fit
+        extent: Optional[List[float] | str] = "balears",
+        aspect: Optional[float] = 1.29, # Best fit
         cmap: str | mcolors.Colormap = 'viridis',
         zero_to_nan: bool = False,
-        xticks: int | tuple[float, float] | list[float] = None,
-        yticks: int | tuple[float, float] | list[float] = None,
+        xticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
+        yticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
         bottom_labels: bool = True,
         left_labels: bool = True,
         legend: bool | dict = False,
         pcolormesh_kwargs: dict = {},
 
         # Parameter of contours
-        contours_levels: int | list[float] = None,
+        contours_levels: Optional[int | list[float]] = None,
         contours_data = None,
-        contours_kwargs: dict = {},
+        contours_kwargs: Dict = {},
 
         # Parameter of colorbar
         add_cbar: bool = True,
@@ -382,11 +385,11 @@ def plot_map(
         cbar_orientation: str = "vertical",
         cbar_shrink: float = 1,
         cbar_pad: float = 0.005,
-        cbar_ticks = None,
+        cbar_ticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
         cbar_inversed: bool = False,
-        cbar_kwargs: dict = {},
-        vmin = None, vmax = None,
-        vlim = None,
+        cbar_kwargs: Dict = {},
+        vmin: Optional[float] = None, vmax: Optional[float] = None,
+        vlim: Optional[Tuple[float, float]] = None,
 
         # Parameter for saving the figure
         save_plot: bool = False,
@@ -640,50 +643,52 @@ def plot_map(
         return fig, ax
 
 def plot_transect(
-    # Parameter of data
-    abscissa, depth,
-    data,
+        # Parameter of data
+        depth: xr.DataArray, abscissa: xr.DataArray,
+        data: xr.DataArray,
 
-    along_lon = False,
-    along_lat = False,
-    abscissa_is_time = False,
+        along_lon: bool = False,
+        along_lat: bool = False,
+        abscissa_is_time: bool = False,
 
-    # Parameter of figure
-    fig=None,figsize=(10,6),figdpi=100,
-    ax: plt.Axes = None,
+        # Parameter of figure
+        fig: Optional[plt.Figure] = None,
+        ax: Optional[plt.Axes] = None,
+        figsize: Tuple[float, float] = (10,6),
+        figdpi: float = 100,
 
-    # Parameter of text
-    fontsize: int = 14,
-    title: str="",
-    show_pos=True,
+        # Parameter of text
+        fontsize: int = 14,
+        title: Optional[str] = None,
+        show_pos: bool = True,
 
-    # Parameter of colorbar
-    add_cbar: bool=True,
-    cbar_unit: str="",
-    cbar_orientation: str="vertical",
-    cbar_shrink: float=1,
-    cbar_pad: float = 0.005,
-    cbar_ticks=None,
-    cbar_inversed: bool=False,
-    vmin=None, vmax=None,
+        # Parameter of colorbar
+        add_cbar: bool = True,
+        cbar_unit: Optional[str] = None,
+        cbar_orientation: str = "vertical",
+        cbar_shrink: float = 1,
+        cbar_pad: float = 0.005,
+        cbar_ticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
+        cbar_inversed: bool = False,
+        vmin: Optional[float] = None, vmax: Optional[float] = None,
 
-    # Parameters of graph
-    cmap="managua",
-    zero_to_nan = False,
-    norm="linear",
-    contours_levels=None,
-    contours_labels_fontsize=8,
-    xticks=None,
-    yticks=None,
-    bottom_labels = True,
-    left_labels = True,
+        # Parameters of graph
+        cmap: str | mcolors.Colormap = "managua",
+        zero_to_nan: bool = False,
+        norm: str = "linear",
+        contours_levels: Optional[int | List[float]] = None,
+        contours_labels_fontsize: int = 8,
+        xticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
+        yticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
+        bottom_labels: bool = True,
+        left_labels: bool = True,
 
-    # Parameter for saving the figure
-    save_plot: bool=False,
-    save_path: str="",
-    dpi: int=160,
+        # Parameter for saving the figure
+        save_plot: bool = False,
+        save_path: str = "",
+        dpi: int = 160,
 
-    show_plots: bool = False,
+        show_plots: bool = False,
 ):
     """
     Creates a transect
@@ -817,7 +822,7 @@ def plot_transect(
             )
 
             if cbar_ticks:
-                cbar_locator = MaxNLocator(nbins=cbar_ticks)
+                cbar_locator = get_locator_from_ticks(cbar_ticks)
                 opts["ticks"] = cbar_locator
 
             cbar = fig.colorbar(pcm, ax=ax, **opts)
@@ -841,38 +846,37 @@ def plot_transect(
 
 def plot_vertical_mean(
         # Parameter of data
-        depths: dict[str, xr.DataArray] | xr.DataArray,
-        vars: dict[str, xr.DataArray] | xr.DataArray,
-        # labels: dict[str, str] | str | None = 'auto',
-        colors: dict[str, str] | str | None = None,
-        ls: dict[str, str] | str | None = None,
+        depths: Dict[str, xr.DataArray] | xr.DataArray,
+        vars: Dict[str, xr.DataArray] | xr.DataArray,
+        colors: Optional[Dict[str, str] | str] = None,
+        ls: Optional[Dict[str, str] | str] = None,
         nans_to_zero: bool = False,
 
         # Parameter of figure
-        fig: plt.Figure | None = None,
-        ax: plt.Axes | None = None,
-        figsize: tuple[int, int] = (4, 6),
+        fig: Optional[plt.Figure] = None,
+        ax: Optional[plt.Axes] = None,
+        figsize: Tuple[int, int] = (4, 6),
         figdpi = 200,
 
         # Parameter of text
         fontsize: int = 14,
-        title: str | None = None,
-        unit: str | None = None,
-        ylabel: str = None,
+        title: Optional[str] = None,
+        unit: Optional[str] = None,
+        ylabel: Optional[str] = None,
 
         # Parameters of graph
         grid: bool = True,
-        xlim: tuple[int|None, int|None] = (None, None),
-        ylim: tuple[int|None, int|None] = (None, None),
-        xticks = None,
+        xlim: Tuple[Optional[int], Optional[int]] = (None, None),
+        ylim: Tuple[Optional[int], Optional[int]] = (None, None),
+        xticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
         xticks_minor = None,
-        yticks = None,
+        yticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
         yticks_minor = None,
         xticks_formatter = None,
         yticks_formatter = None,
-        bottom_labels = True,
-        left_labels = True,
-        top_labels = False,
+        bottom_labels: bool = True,
+        left_labels: bool = True,
+        top_labels: bool = False,
         legend: bool = True,
 
         # Parameter for saving the figure
@@ -1087,37 +1091,37 @@ def plot_vertical_mean(
 
 def plot_timeserie(
         # Parameter of data
-        times: dict[str, xr.DataArray] | xr.DataArray,
-        vars: dict[str, xr.DataArray] | xr.DataArray,
-        vars_stds: dict[str, xr.DataArray] | xr.DataArray | None = None,
-        labels: dict[str, str] | str | None = 'auto',
-        colors: dict[str, str] | str | None = None,
-        ls: dict[str, str] | str | None = None,
+        times: Dict[str, xr.DataArray] | xr.DataArray,
+        vars: Dict[str, xr.DataArray] | xr.DataArray,
+        vars_stds: Optional[Dict[str, xr.DataArray] | xr.DataArray] = None,
+        labels: Optional[Dict[str, str] | str] = 'auto',
+        colors: Optional[Dict[str, str] | str] = None,
+        ls: Optional[Dict[str, str] | str] = None,
         nans_to_zero: bool = False,
 
         # Parameter of figure
-        fig: plt.Figure | None = None,
-        ax: plt.Axes | None = None,
-        figsize: tuple[int, int] = (18, 5),
-        figdpi = 100,
+        fig: Optional[plt.Figure] = None,
+        ax: Optional[plt.Axes] = None,
+        figsize: Tuple[int, int] = (18, 5),
+        figdpi: float = 100,
 
         # Parameter of text
         fontsize: int = 14,
-        title: str | None = None,
-        ylabel = None,
-        xlabel = None,
+        title: Optional[str] = None,
+        ylabel: Optional[str] = None,
+        xlabel: Optional[str] = None,
 
         # Parameters of graph
         grid: bool = True,
         xlim: tuple[int|None, int|None] = (None, None),
         ylim: tuple[int|None, int|None] = (None, None),
-        xticks = None,
+        xticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
         xticks_minor = None,
-        yticks = None,
+        yticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
         yticks_minor = None,
         yticks_formatter = None,
-        bottom_labels = True,
-        left_labels = True,
+        bottom_labels: bool = True,
+        left_labels: bool = True,
         texts: list[dict] = [],
         legend: bool | dict = True,
 
@@ -1341,40 +1345,39 @@ def plot_timeserie(
 def plot_bars(
         # Parameter of data
         depths: xr.DataArray,
-        vars: dict[str, xr.DataArray],
-        stds: dict[str, xr.DataArray] = None,
-        # labels: dict[str, str] | str | None = 'auto',
-        colors: dict[str, str] | str = None,
-        ls: dict[str, str] | str = None,
-        hatch: dict[str, str] | str = None,
+        vars: Dict[str, xr.DataArray],
+        stds: Optional[Dict[str, xr.DataArray]] = None,
+        colors: Optional[Dict[str, str] | str] = None,
+        ls: Optional[Dict[str, str] | str] = None,
+        hatch: Optional[Dict[str, str] | str] = None,
 
         # Parameter of figure
-        fig: plt.Figure = None,
-        ax: plt.Axes = None,
-        figsize: tuple[int, int] = (10, 5),
-        figdpi = 100,
+        fig: Optional[plt.Figure] = None,
+        ax: Optional[plt.Axes] = None,
+        figsize: Tuple[int, int] = (10, 5),
+        figdpi: float = 100,
 
         # Parameter of text
         fontsize: int = 14,
-        title: str = None,
-        xlabel: str = None,
-        ylabel: str = None,
-        texts: list[dict] = [],
+        title: Optional[str] = None,
+        xlabel: Optional[str] = None,
+        ylabel: Optional[str] = None,
+        texts: List[Dict] = [],
 
         # Parameters of graph
         grid: bool = True,
         nans_to_zero: bool = False,
-        xlim: tuple[int|None, int|None] = (None, None),
-        xticks = None,
+        xlim: Tuple[Optional[float], Optional[float]] = (None, None),
+        xticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
         xticks_minor = None,
-        yticks = None,
+        yticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
         yticks_minor = None,
         xticks_formatter = None,
-        bottom_labels = True,
-        left_labels = True,
-        top_labels = False,
+        bottom_labels: bool = True,
+        left_labels: bool = True,
+        top_labels: bool = False,
         legend: bool = True,
-        bars_pad = 2,
+        bars_pad: float = 2,
 
         # Parameter for saving the figure
         show_plots: bool = False,
@@ -1596,44 +1599,16 @@ def plot_bars(
             plt.close("all")
     
     return fig, ax
+    
 
-def add_colorbar(
-    fig: plt.Figure,
-    ax,
-    mappable,
-
-    # Parameter of colorbar
-    cbar_unit: str = None,
-    cbar_orientation: str = "vertical",
-    cbar_shrink: float = None,
-    cbar_fraction: float = None,
-    cbar_pad: float = None,
-    cbar_ticks = None,
-    cbar_formatter = None,
-    cbar_inversed: bool = False,
-    **kwargs
+def get_locator_from_ticks(
+        ticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
+        which: str = "major",
 ):
-    opts = dict(
-        orientation=cbar_orientation, shrink=cbar_shrink, pad=cbar_pad, fraction=cbar_fraction
-    )
-
-    if cbar_unit:
-        opts["label"] = f"[{cbar_unit}]"
+    """
     
-    if cbar_formatter:
-        opts["format"] = cbar_formatter
-
-    if cbar_ticks:
-        cbar_locator = get_locator_from_ticks(cbar_ticks)
-        opts["ticks"] = cbar_locator
-
-    cbar = fig.colorbar(mappable, ax=ax, **opts, **kwargs)
-
-    if cbar_inversed:
-        cbar.ax.invert_yaxis()
+    """
     
-
-def get_locator_from_ticks(ticks, which="major"):
     if isinstance(ticks, int):
         if which == "major":
             return MaxNLocator(nbins=ticks)

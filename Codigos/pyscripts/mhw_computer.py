@@ -78,11 +78,13 @@ import os
 import glob as glob
 import math
 from datetime import date
+from typing import Literal, Optional, List, Dict, Tuple, Any
 
 # Advanced imports
 import numpy as np
+from numpy.typing import NDArray
 import xarray as xr
-from dask.diagnostics import ProgressBar
+from dask.diagnostics.progress import ProgressBar
 
 # Local imports
 import pyscripts.marineHeatWaves as mhw
@@ -97,7 +99,7 @@ import pyscripts.options as opts
 def compute_mhw_yearly(
         # Dataset options
         ds: xr.Dataset | xr.DataArray,
-        using_dataset: str = None,
+        using_dataset: Optional[str] = None,
         var_name: str = 'T',
 
         # Computation options
@@ -218,10 +220,10 @@ def compute_mhw_yearly(
     ds_mhws.attrs['climatologyPeriod'] = f'{clim_period[0]}-{clim_period[1]}'
     ds_mhws.attrs['description'] = opts.mhw_yearly_dataset_description
 
-    if using_dataset.lower() == 'rep':
+    if using_dataset and using_dataset.lower() == 'rep':
         ds_mhws.attrs['acknowledgment'] = opts.rep_acknowledgment
 
-    elif using_dataset.lower() == 'medrea':
+    elif using_dataset and using_dataset.lower() == 'medrea':
         ds_mhws.attrs['acknowledgment'] = opts.medrea_acknowledgment
 
     # Returning the final Dataset!
@@ -229,7 +231,7 @@ def compute_mhw_yearly(
 
 
 
-def compute_mhw_yearly_wrapped(t: np.array, sst: np.array, clim_period: tuple[int, int], detrend: bool) -> tuple[np.array]:
+def compute_mhw_yearly_wrapped(t: NDArray, sst: NDArray, clim_period: Tuple[int, int], detrend: bool) -> Tuple[NDArray]:
     """
     Wrapper for compute_mhw_yearly. Computes annual MHW statistics for a given temperature time series.
 
@@ -305,11 +307,11 @@ clim_keys = ['thresh', 'seas', 'missing', 'sst']
 def compute_mhw_all_events(
         # Dataset options
         ds: xr.Dataset | xr.DataArray,
-        using_dataset: str = None,
+        using_dataset: Optional[str] = None,
         var_name: str = 'T',
 
         # Computation options
-        clim_period: tuple[int, int] = (1987,2021),
+        clim_period: Tuple[int, int] = (1987,2021),
         detrend: bool = False,
 ) -> xr.Dataset:
     """
@@ -446,10 +448,10 @@ def compute_mhw_all_events(
     ds_mhws.attrs['climatologyPeriod'] = f'{clim_period[0]}-{clim_period[1]}'
     ds_mhws.attrs['description'] = opts.mhw_dataset_description
 
-    if using_dataset.lower() == 'rep':
+    if using_dataset and using_dataset.lower() == 'rep':
         ds_mhws.attrs['acknowledgment'] = opts.rep_acknowledgment
 
-    elif using_dataset.lower() == 'medrea':
+    elif using_dataset and using_dataset.lower() == 'medrea':
         ds_mhws.attrs['acknowledgment'] = opts.medrea_acknowledgment
 
     # Returning the final Dataset!
@@ -457,7 +459,7 @@ def compute_mhw_all_events(
 
 
 
-def compute_mhw_all_events_wrapped(t: np.array, sst: np.array, clim_period: tuple[int, int], detrend: bool):
+def compute_mhw_all_events_wrapped(t: NDArray, sst: NDArray, clim_period: tuple[int, int], detrend: bool):
     """
     Wrapper for compute_mhw_all_events. Computes MHW statistics for a given temperature time series.
 
@@ -510,7 +512,7 @@ def compute_mhw_all_events_wrapped(t: np.array, sst: np.array, clim_period: tupl
     # Return event and daily metrics
     return tuple(
         [
-            np.pad(np.array(mhws[stat], dtype=np.float64), (0, math.floor(len(t)/8)-len(mhws[stat])), constant_values=np.nan)
+            np.pad(np.array(mhws[stat], dtype=np.float64), (0, math.ceil(len(t)/8)-len(mhws[stat])), constant_values=np.nan)
             for stat in mhws_all_events_stats
         ] + [
             clim[key].astype(float) for key in clim_keys
@@ -520,9 +522,9 @@ def compute_mhw_all_events_wrapped(t: np.array, sst: np.array, clim_period: tupl
 
 def get_mhw_ts_from_ds(
         ds_mhws: xr.Dataset,
-        lon: float = None,
-        lat: float = None,
-        depth: float = None,
+        lon: Optional[float] = None,
+        lat: Optional[float] = None,
+        depth: Optional[float] = None,
 
         calculate_mhw_mask: bool = True
 ):

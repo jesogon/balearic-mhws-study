@@ -176,10 +176,11 @@ def load_bathy(
         )
 
         # Adjusting the parameters, name and value
-        ds_bathy_MEDREA = ds_bathy_MEDREA.drop_dims('depth')
-        ds_bathy_MEDREA = ds_bathy_MEDREA.rename({
-            'deptho': 'depth'
-        })
+        if 'depth' in ds_bathy_MEDREA.dims:
+            ds_bathy_MEDREA = ds_bathy_MEDREA.drop_dims('depth')
+            ds_bathy_MEDREA = ds_bathy_MEDREA.rename({
+                'deptho': 'depth'
+            })
 
         # Printing the good news
         print(f"Loaded MEDREA bathymetry dataset{' (all med)' if source.lower() == 'medrea_med' else ''}.")
@@ -275,6 +276,14 @@ def load_rep(
         
         # Remove bay of Biscay
         # ds = ds.where(((ds.lon > 0) | (ds.lat < 42)), drop=True)
+
+        # Uniformying variables name
+        if 'longitude' in ds.coords:
+            ds = ds.rename({'longitude': 'lon'})
+
+        # Uniformying variables name
+        if 'latitude' in ds.coords:
+            ds = ds.rename({'latitude': 'lat'})
 
         # Spatial selection
         if not lon_selector is None:
@@ -633,6 +642,13 @@ def save_dataset_to_nc(
         The computed dataset.
     """
 
+    # Create directory for the dataset if not existing
+    dir = os.path.dirname(file_path)
+
+    if not os.path.exists(dir):
+        os.makedirs(dir)
+        print(f"Created dir {dir}.")
+
     # Compute the dataset using a progress bar
     if progress_bar:
         with ProgressBar():
@@ -656,7 +672,7 @@ def save_dataset_to_nc(
         ds.to_netcdf(file_path)
 
     # Returning the final dataset
-    # return ds
+    return ds
 
 
 
