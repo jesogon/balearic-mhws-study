@@ -1,10 +1,15 @@
 numpy
 xarray
 dask
-pymannkendall
+
+# For plotting
 matplotlib
 geopy
 shapely
 cartopy
 cmocean
 roman # used for some figure labelling
+pymannkendall
+
+# For downloading the data
+copernicusmarine

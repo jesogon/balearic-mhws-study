@@ -4,16 +4,16 @@ The data here is meant to be used to compute MHW metrics in the Mediterranean Se
 
 ## What is in here?
 
- - `bathymetry/` (Input) :
+ - `bathymetry/` **(Input)** :
      Bathymetry files, from MEDREA or GEBCO.
 
- - `REP/` (Input) :
+ - `REP/` **(Input)** :
      Reprocessed satellite-derived SST over the Mediterranean Sea from 1982 to 2023 provided by Copernicus Marine Service.
 
- - `MEDREA/` (Input) :
+ - `MEDREA/` **(Input)** :
      Physical reanalysis over the Mediterranean Sea from 1987 to 2022 provided by Copernicus Marine Service. For the purpose of the study, only a subset of the data in the Balearic region was used.
 
- - `mhws/` (Output) :
+ - `mhws/` **(Output)** :
      NetCDF files containing pre-computed MHW metrics, to be used to produce figures.
 
 *Please note that this code can also be adapted to work with other data.*
@@ -59,6 +59,6 @@ The expected file tree inside the Datos folder should be as follow:
 > >     ├─ rep_mean_mhws_balears_1987_2021.nc <br>
 > >     └─ medrea_mean_mhws_balears_1987_2021.nc <br>
 
-## Licenses
+## License
 
 This work make use of E.U. Copernicus Marine Service Information; https://doi.org/10.48670/moi-00173; https://doi.org/10.25423/CMCC/MEDSEA_MULTIYEAR_PHY_006_004_E3R1, under a permissive license.

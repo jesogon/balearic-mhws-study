@@ -6,6 +6,12 @@ The MEDREA dataset has been provided by E.U. Copernicus Marine Service Informati
 
 ## How to download?
 
+### Automated download
+
+Inside the `Codigos/` folder, the Python notebook `02_download_data.ipynb` automates the downloading of this dataset.
+
+### Manual download
+
  1. Go on https://doi.org/10.25423/CMCC/MEDSEA_MULTIYEAR_PHY_006_004_E3R1
  2. Click on `Data access`
  3. Download "Temperature, daily"

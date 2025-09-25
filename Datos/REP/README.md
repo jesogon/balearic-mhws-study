@@ -6,6 +6,14 @@ The REP dataset has been provided by E.U. Copernicus Marine Service Information;
 
 ## How to download?
 
+### Automated download
+
+Inside the `Codigos/` folder, the Python notebook `02_download_data.ipynb` automates the downloading of this dataset.
+
+### Manual download
+
+However, to download it manually, here is how:
+
  1. Go on https://doi.org/10.48670/moi-00173
  2. Click on `Data access`
  3. Download "All data"
