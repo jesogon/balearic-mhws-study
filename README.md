@@ -4,6 +4,14 @@ This repository contains all the code used to produce figures for the master the
 
 Please note that the repository is not in its final state. Modifications for enhancing the code readability are planned during the whole month of September 2025.
 
+## Overview
+
+This code is meant to compute and visualise marine heatwaves (MHWs) in the Balearic Islands region. It is intented to provide a reproducible, modular and extensible workflow for:
+
+- Downloading and handling large oceanographic datasets
+- Computing MHW metrics using a l
+- Generating figures for reports and presentations
+
 ## What is in here?
 
  - `Codigos/` :
@@ -19,9 +27,9 @@ Please note that the repository is not in its final state. Modifications for enh
 
 See the `README.md` inside the Codigos folder for more details. 
 
-## External files
+## External data
 
-For most of the code here, external files are expected, namely data files. Due to the large size of those files, they are not included in the GitHub repository.
+For most of the code here, external data are expected. Due to the large size of those files, they are not included in the GitHub repository.
 
 See the `README.md` inside the Datos folder for more details.
 

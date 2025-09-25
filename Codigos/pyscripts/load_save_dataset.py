@@ -332,10 +332,10 @@ def load_medrea(
         months: List[int] | range = range(1, 13),
 
         # Selectors
-        time_selector: Optional[str | slice] = None,
-        lon_selector: Optional[float | slice] = None,
-        lat_selector: Optional[float | slice] = None,
-        depth_selector: Optional[float | slice] = slice(0, 3000), # Should not remove any data in the study region
+        time_selector: Optional[str | slice | List[str]] = None,
+        lon_selector: Optional[float | slice | List[float]] = None,
+        lat_selector: Optional[float | slice | List[float]] = None,
+        depth_selector: Optional[float | slice | List[float]] = slice(0, 3000), # Should not remove any data in the study region
         region_selector: Optional[str] = 'balears',
 
         # Dataset options
@@ -414,6 +414,14 @@ def load_medrea(
     # Preprocess applied before concatenating the datasets
     def preprocess(ds: xr.Dataset) -> xr.Dataset:
         """ This preprocess selects the data while loading, which makes an efficient loading """
+        
+        # Uniformying variables name
+        if 'longitude' in ds.coords:
+            ds = ds.rename({'longitude': 'lon'})
+
+        # Uniformying variables name
+        if 'latitude' in ds.coords:
+            ds = ds.rename({'latitude': 'lat'})
         
         # Remove bay of Biscay
         if not region_selector == 'balears':

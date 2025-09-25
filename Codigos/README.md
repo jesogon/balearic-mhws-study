@@ -24,9 +24,26 @@ The code here is meant to compute MHW metrics from temperature data and produce 
 
 ## How should this code be runned?
 
- 1. Make sure to have correctly setup the Python environment by running `01_check_packages.ipynb`.
- 1. Make sure to have correctly downloaded the required data by running `02_download_data.ipynb`.
+ 1. Make sure to have correctly setup the Python environment by running `01_check_packages.ipynb`:
+
+> - Python 3.10+
+> - **Data** : copernicusmarine
+> - **Computation**: numpy, xarray, dask, scipy
+> - **Visualisation**: matplotlib, cartopy, geopy, shapely, cmocean, roman, pymannkendall
+> - **Development Environment**: Jupyter Notebooks, VS Code
+
+ 2. Make sure to have correctly downloaded the required data by running `02_download_data.ipynb`.
  3. Run `03_mhws_computing.ipynb` to compute MHW datasets.
  4. Finally, run `04_report_plotting.ipynb` or `05_presentation_plotting.ipynb` to generate the desired figures.
 
 *Note: Visual Studio Code was used during development, the workflow being thought to integrate easily with it.*
+
+## Troubleshooting
+
+**> The code can't find my data files.** <br>
+Double-check that the `Datos/` folder matches the required structure. If the structure is changed, update the paths in `load_save_dataset.py`.
+
+**> I get errors with specific packages.** <br>
+Run `01_check_packages.ipynb` to check dependencies, to ensure they are installed under a correct version.
+
+For any other query, please contact the author.

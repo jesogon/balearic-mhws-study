@@ -398,7 +398,7 @@ def plot_map(
         show_plots: bool = False,
 
         **kwargs
-):
+) -> Tuple[plt.Figure, plt.Axes]:
     """
     Plots 2D data onto a map with land features using matplotlib's `pcolormesh` function.
 

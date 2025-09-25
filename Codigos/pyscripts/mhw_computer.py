@@ -527,7 +527,7 @@ def get_mhw_ts_from_ds(
         depth: Optional[float] = None,
 
         calculate_mhw_mask: bool = True
-):
+) -> Tuple[NDArray, Dict]:
     """
     Format the statistics produced by 'compute_mhw_all_events' in a more friendly way.
 

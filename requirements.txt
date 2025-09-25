@@ -1,12 +1,13 @@
 numpy
 xarray
 dask
+scipy
 
 # For plotting
 matplotlib
+cartopy
 geopy
 shapely
-cartopy
 cmocean
 roman # used for some figure labelling
 pymannkendall
