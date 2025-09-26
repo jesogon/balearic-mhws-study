@@ -14,10 +14,10 @@ This code is meant to compute and visualise marine heatwaves (MHWs) in the Balea
 
 ## What is in here?
 
- - `Codigos/` :
+ - `Code/` :
     Code used to compute MHW metrics and produce figures from them.
 
- - `Datos/` :
+ - `Data/` :
     Data used by the code (namely, temperature and bathymetry data). Those files are not included to the GitHub repository.
 
  - `Documentos/` :
@@ -25,13 +25,13 @@ This code is meant to compute and visualise marine heatwaves (MHWs) in the Balea
 
 ## How should this code be runned?
 
-See the `README.md` inside the Codigos folder for more details. 
+See the `README.md` inside the Code folder for more details. 
 
 ## External data
 
 For most of the code here, external data are expected. Due to the large size of those files, they are not included in the GitHub repository.
 
-See the `README.md` inside the Datos folder for more details.
+See the `README.md` inside the Data folder for more details.
 
 ## License
 
