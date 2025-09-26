@@ -1,11 +1,13 @@
 .vscode
 
-Datos/*/**
-!Datos/*/*.md
+Data/*/**
+!Data/*/*.md
 
-Figuras/*
+Datos - OLD
+
+Figures/*
 merge previous commits
-Codigos/pyscripts/marineHeatWaves copy.py
-Codigos/extra
+Code/pyscripts/marineHeatWaves copy.py
+Code/extra
 
 **/__pycache__/

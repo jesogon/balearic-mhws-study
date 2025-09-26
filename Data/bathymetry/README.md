@@ -20,8 +20,10 @@ Inside the `Code/` folder, the Python notebook `02_download_data.ipynb` automate
 
  4. Structure the data under the following data structure to be used directly with the code provided here. If the data structure is modified, please modify the `Code/pyscripts/load_save_dataset.py` folder paths.
 
- > `bathymetry/` <br>
- >  └─ Bathymetry_MEDREA_006_004_mask_bathy_BalearicIslands.nc <br>
+```
+bathymetry/
+└── Bathymetry_MEDREA_006_004_mask_bathy_BalearicIslands.nc
+```
 
 ## Overview
 

@@ -46,4 +46,4 @@ Double-check that the `Data/` folder matches the required structure. If the stru
 **> I get errors with specific packages.** <br>
 Run `01_check_packages.ipynb` to check dependencies, to ensure they are installed under a correct version.
 
-For any other query, please contact the author.
+**For any other query, please contact the author.**

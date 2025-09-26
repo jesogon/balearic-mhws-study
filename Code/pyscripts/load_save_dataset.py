@@ -178,9 +178,10 @@ def load_bathy(
         # Adjusting the parameters, name and value
         if 'depth' in ds_bathy_MEDREA.dims:
             ds_bathy_MEDREA = ds_bathy_MEDREA.drop_dims('depth')
-            ds_bathy_MEDREA = ds_bathy_MEDREA.rename({
-                'deptho': 'depth'
-            })
+        
+        ds_bathy_MEDREA = ds_bathy_MEDREA.rename({
+            'deptho': 'depth'
+        })
 
         # Printing the good news
         print(f"Loaded MEDREA bathymetry dataset{' (all med)' if source.lower() == 'medrea_med' else ''}.")

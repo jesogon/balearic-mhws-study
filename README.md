@@ -9,7 +9,7 @@ Please note that the repository is not in its final state. Modifications for enh
 This code is meant to compute and visualise marine heatwaves (MHWs) in the Balearic Islands region. It is intented to provide a reproducible, modular and extensible workflow for:
 
 - Downloading and handling large oceanographic datasets
-- Computing MHW metrics using a l
+- Computing MHW metrics
 - Generating figures for reports and presentations
 
 ## What is in here?
@@ -35,13 +35,13 @@ See the `README.md` inside the Data folder for more details.
 
 ## License
 
-This code have been developped by Arthur Gonnet, and are licensed under the GNU General Public License v3.0 (GPLv3).
+This code have been developped by Arthur Gonnet, and is licensed under the GNU General Public License v3.0 (GPLv3).
 
-This code include a modified version of the *marineHeatWaves* module for python developped by Eric C. J. Oliver (see https://github.com/ecjoliver/marineHeatWaves), under GPLv3 license.
+This code includes a modified version of the *marineHeatWaves* module for python developped by Eric C. J. Oliver (see https://github.com/ecjoliver/marineHeatWaves), under GPLv3 license.
 
-This code include the *pyMannKendall* module for python developped by Md. Manjurul Hussain and Ishtiak Mahmud (see https://github.com/mmhs013/pyMannKendall), under MIT license.
+This code uses the *pyMannKendall* module for python developped by Md. Manjurul Hussain and Ishtiak Mahmud (see https://github.com/mmhs013/pyMannKendall), under MIT license.
 
-This work make use of E.U. Copernicus Marine Service Information; https://doi.org/10.48670/moi-00173; https://doi.org/10.25423/CMCC/MEDSEA_MULTIYEAR_PHY_006_004_E3R1, under a permissive license.
+This work makes use of E.U. Copernicus Marine Service Information; https://doi.org/10.48670/moi-00173; https://doi.org/10.25423/CMCC/MEDSEA_MULTIYEAR_PHY_006_004_E3R1, under a permissive license.
 
 ## Contact
 

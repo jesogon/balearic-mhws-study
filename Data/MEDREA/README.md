@@ -19,14 +19,16 @@ Inside the `Code/` folder, the Python notebook `02_download_data.ipynb` automate
  > When downloading, either download the whole files using `Browse` link, or download only subsets using `Form` link. For the second option, you will require a Copernicus Marine Data Store account. Note that in this study, the subset used had the coordinates: Lat 37.69° to 40.98°, Lon -1.042° to 5.458°.
 
  4. (Optional) Structure the data under the following data structure to be used directly with the code provided here. If the data structure is modified, please modify the `Code/pyscripts/load_save_dataset.py` folder paths.
-
- >  `MEDREA/` <br>
- >   └─ MEDITERRANEAN/REANALYSIS/DATA/DAILY/BalearicIslands/ <br>
- >     ├─ 1987/ <br>
- >     │  ├─ TEMP_MEDSEA_MULTIYEAR_PHY_006_004_y1987m01_BalearicIslands.nc <br>
- >     │  └─ ... <br>
- >     ├─ 1988/ <br>
- >     └─ ... <br>
+ 
+ ```
+MEDREA/
+└── MEDITERRANEAN/REANALYSIS/DATA/DAILY/BalearicIslands/
+    ├── 1987/
+    │   ├── TEMP_MEDSEA_MULTIYEAR_PHY_006_004_y1987m01_BalearicIslands.nc
+    │   └── ...
+    ├── 1988/
+    └── ...
+```
 
 ## Overview
 

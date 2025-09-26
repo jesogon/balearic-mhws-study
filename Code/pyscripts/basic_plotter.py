@@ -12,7 +12,7 @@ Functions description
         Builds a figure with subplots with matplotlib.
 
     - plot_map(lon, lat, data, ...):
-        Plots 2D data (lon, lat) onto a map.
+        Plots 2D data (lon, lat) onto a map with land features.
 
     - plot_transect(depth, abscissa, data, ...):
         Plots 2D data (depth, any) onto a transect.
@@ -128,16 +128,15 @@ def subplot(
         fig_vmax: Optional[float] = None,
         fig_cmap: Optional[str] = None,
         fig_cbar_unit: Optional[str] = None,
-        fig_cbar_ticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
+        fig_cbar_ticks: Optional[int | Tuple[float, float] | List[float]] = None,
         fig_cbar_orientation: str = 'vertical',
         fig_cbar_pad: float = 0.005,
         fig_cbar_fraction: float = 0.025,
 
         # Parameter for saving the figure
+        show_plots: bool = False,
         save_plot: bool = False,
         save_path: str = "",
-
-        show_plots: bool = False,
 ):
     """
     Builds a figure with subplots with matplotlib.
@@ -342,15 +341,18 @@ def subplot(
     if not show_plots and not save_plot:
         return fig
 
+
+
 def plot_map(
         # Parameter of data
-        lon: xr.DataArray = [0], lat: xr.DataArray = [0],
+        lon: xr.DataArray = [0],
+        lat: xr.DataArray = [0],
         data: xr.DataArray = [[np.nan]],
 
         # Parameter of figure
         fig: Optional[plt.Figure] = None,
         ax: Optional[plt.Axes] = None,
-        figsize: Tuple[int, int] = (10, 6),
+        figsize: Tuple[float, float] = (10, 6),
         figdpi: float = 100,
         fig_kwargs: Dict = {},
 
@@ -367,8 +369,8 @@ def plot_map(
         aspect: Optional[float] = 1.29, # Best fit
         cmap: str | mcolors.Colormap = 'viridis',
         zero_to_nan: bool = False,
-        xticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
-        yticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
+        xticks: Optional[int | Tuple[float, float] | List[float]] = None,
+        yticks: Optional[int | Tuple[float, float] | List[float]] = None,
         bottom_labels: bool = True,
         left_labels: bool = True,
         legend: bool | dict = False,
@@ -385,7 +387,7 @@ def plot_map(
         cbar_orientation: str = "vertical",
         cbar_shrink: float = 1,
         cbar_pad: float = 0.005,
-        cbar_ticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
+        cbar_ticks: Optional[int | Tuple[float, float] | List[float]] = None,
         cbar_inversed: bool = False,
         cbar_kwargs: Dict = {},
         vmin: Optional[float] = None, vmax: Optional[float] = None,
@@ -425,6 +427,9 @@ def plot_map(
     figdpi: float, default=100   
         The resolution of the figure in dots-per-inch.
     
+    fig_kwargs: dict, optional   
+        Arguments passed to `plt.figure(...)`.
+    
     fontsize: int, default=14
         Fontsize that will be applied to the plot.
     
@@ -458,25 +463,36 @@ def plot_map(
         Defines the fontsize of the contour labels.
     
     xticks: int | tuple[float, float] | list[float], optional
-        Defines the ticks of the x axis. Giving an int will use a `MaxNLocator`.
+        Defines the ticks of the x-axis. Giving an int will use a `MaxNLocator`.
         Giving a tuple will use a `MultipleLocator`, the first float being the base and the second the offset.
         Giving a list of float will use a `FixedLocator` with the values given.
     
     yticks: int | tuple[float, float] | list[float], optional
-        Defines the ticks of the y axis. Giving an int will use a `MaxNLocator`.
-        Giving a tuple will use a `MultipleLocator`, the first float being the base and the second the offset.
-        Giving a list of float will use a `FixedLocator` with the values given.
+        Defines the ticks of the x-axis.
+        - Giving an int will use a `MaxNLocator`.
+        - Giving a tuple will use a `MultipleLocator`, the first float being the base and the second the offset.
+        - Giving a list of float will use a `FixedLocator` with the values given.
     
     yticks: int | tuple[float, float] | list[float], optional
-        Defines the ticks of the y axis. Giving an int will use a `MaxNLocator`.
-        Giving a tuple will use a `MultipleLocator`, the first float being the base and the second the offset.
-        Giving a list of float will use a `FixedLocator` with the values given.
+        Defines the ticks of the y-axis.
+        - Giving an int will use a `MaxNLocator`.
+        - Giving a tuple will use a `MultipleLocator`, the first float being the base and the second the offset.
+        - Giving a list of float will use a `FixedLocator` with the values given.
 
     bottom_labels: bool, default=True
         Defines if the labels of the bottom ticks should be displayed or not.
     
     left_labels: bool, default=True
         Defines if the labels of the left ticks should be displayed or not.
+    
+    show_plots: bool, default=False
+        Defines if showing the figure after plotting.
+    
+    save_plot: bool, default=False
+        Defines if saving the figure after plotting.
+    
+    save_path: bool, default=False
+        Defines the path to which save the figure.
 
     Returns
     -------
@@ -642,6 +658,8 @@ def plot_map(
     if not show_plots and not save_plot:
         return fig, ax
 
+
+
 def plot_transect(
         # Parameter of data
         depth: xr.DataArray, abscissa: xr.DataArray,
@@ -668,7 +686,7 @@ def plot_transect(
         cbar_orientation: str = "vertical",
         cbar_shrink: float = 1,
         cbar_pad: float = 0.005,
-        cbar_ticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
+        cbar_ticks: Optional[int | Tuple[float, float] | List[float]] = None,
         cbar_inversed: bool = False,
         vmin: Optional[float] = None, vmax: Optional[float] = None,
 
@@ -678,8 +696,8 @@ def plot_transect(
         norm: str = "linear",
         contours_levels: Optional[int | List[float]] = None,
         contours_labels_fontsize: int = 8,
-        xticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
-        yticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
+        xticks: Optional[int | Tuple[float, float] | List[float]] = None,
+        yticks: Optional[int | Tuple[float, float] | List[float]] = None,
         bottom_labels: bool = True,
         left_labels: bool = True,
 
@@ -844,18 +862,19 @@ def plot_transect(
     if not show_plots and not save_plot:
         return fig, ax
 
+
+
 def plot_vertical_mean(
         # Parameter of data
         depths: Dict[str, xr.DataArray] | xr.DataArray,
         vars: Dict[str, xr.DataArray] | xr.DataArray,
         colors: Optional[Dict[str, str] | str] = None,
         ls: Optional[Dict[str, str] | str] = None,
-        nans_to_zero: bool = False,
 
         # Parameter of figure
         fig: Optional[plt.Figure] = None,
         ax: Optional[plt.Axes] = None,
-        figsize: Tuple[int, int] = (4, 6),
+        figsize: Tuple[float, float] = (4, 6),
         figdpi = 200,
 
         # Parameter of text
@@ -866,18 +885,18 @@ def plot_vertical_mean(
 
         # Parameters of graph
         grid: bool = True,
-        xlim: Tuple[Optional[int], Optional[int]] = (None, None),
-        ylim: Tuple[Optional[int], Optional[int]] = (None, None),
-        xticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
-        xticks_minor = None,
-        yticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
-        yticks_minor = None,
-        xticks_formatter = None,
-        yticks_formatter = None,
+        nans_to_zero: bool = False,
+        xlim: Tuple[Optional[float], Optional[float]] = (None, None),
+        ylim: Tuple[Optional[float], Optional[float]] = (None, None),
+        xticks: Optional[int | Tuple[float, float] | List[float]] = None,
+        xticks_minor: Optional[int | Tuple[float, float] | List[float]] = None,
+        yticks: Optional[int | Tuple[float, float] | List[float]] = None,
+        yticks_minor: Optional[int | Tuple[float, float] | List[float]] = None,
+        xticks_formatter: plt.Formatter = None,
+        yticks_formatter: plt.Formatter = None,
         bottom_labels: bool = True,
         left_labels: bool = True,
         top_labels: bool = False,
-        legend: bool = True,
 
         # Parameter for saving the figure
         show_plots: bool = False,
@@ -887,77 +906,105 @@ def plot_vertical_mean(
         **kwargs
 ):
     """
-    Plots a time serie with the defined settings.
+    Plots 1D data (depth) as a line plot.
 
     Parameters
     ----------
-    vars: dict[str, xr.DataArray]
-        Dictionary attributing to a name a data array representing the variable to plot.
-    
-    times: dict[str, xr.DataArray]
-        Dictionary attributing to a name a data array representing the time array associated with the variable to plot.
-    
-    vars_stds: dict[str, xr.DataArray] | None, default=None
-        Dictionary attributing to a name a data array representing the std array associated with the variable to plot.
-    
-    labels: dict[str, str] | None, default=None
-        Dictionary attributing to a name the label to assign to the variable to plot.
-    
-    colors: dict[str, str] | None, default=None
-        Dictionary attributing to a name the color to assign to the variable to plot.
-    
-        
-    fig: plt.Figure | None, default=None
-        Figure to use if previously created. None value will create a new figure only if ax is None.
-        If ax is not None, no new figure will be created.
-    
-    ax: plt.Axes | None, default=None
-        Axes to use if previously created. None value will create a new axes.
-    
-    figsize: tuple[int, int], default=(18, 5)
-        Figure size to use if creating a new figure.
-    
-    
-    fontsize: int = 14
-        Font size to be used in the plot.
+    depths: dict[str, xr.DataArray] | xr.DataArray
+        Dictionary attributing to a name a data array representing the depth array associated with the variable to plot. For plotting only one variable, a single DataArray can be passed.
 
-    title: str|None = None,
-    unit: str|None = None,
+    vars: dict[str, xr.DataArray] | xr.DataArray
+        Dictionary attributing to a name a data array representing the variable data to plot. For plotting only one variable, a single DataArray can be passed.
+    
+    colors: dict[str, str] | str, optional
+        Dictionary attributing to a name the color to assign to the variable to plot. Pass a single value to apply it to all variables. Can be 'black', 'r'...
+    
+    ls: dict[str, str], optional
+        Dictionary attributing to a name the color to assign to the variable to plot. Pass a single value to apply it to all variables. Can be '-', '--', '-.'...
+    
+    fig: plt.Figure, optional
+        If created beforehand, the figure to plot on. Otherwise, a new figure is created.
+    
+    ax: plt.Axes, optional
+        If created beforehand, the axe to plot on. Otherwise, a new axe is created.
+    
+    figsize: tuple[float, float], default=(10, 6)
+        If creating a new figure, (width, height) of the figure in inches.
+    
+    figdpi: float, default=200   
+        The resolution of the figure in dots-per-inch.
+    
+    fontsize: int, default=14
+        Fontsize that will be applied to the plot.
 
-    # Axe options
-    grid: bool = True,
-    xlim: tuple = (None, None),
-    ylim: tuple = (None, None),
+    title: str, optional
+        Title of the axe.
+    
+    unit: str, optional
+        Unit of the data.
+    
+    ylabel: str, optional
+        Label for the y-axis. Can be "Depth [m]".
 
-    # Saving options
-    save_plot: bool = False,
-    save_path: str = "",
+    grid: bool, default=True
+        Add grid lines to the plot
 
-    years: list[int|str], default=["*"], optional
-        Years to load from the dataset, as integers or strings (e.g., range(1983, 1985) or ["1983"]).
-        Use ["*"] to load all available years (1982-2023) as it uses a glob pattern.
+    nans_to_zero: bool, default=False
+        Changes every nan values of the data into zeros before plotting.
+
+    xlim: tuple[float|None, float|None], optional
+        Limit of the x-axis.
+
+    ylim: tuple[float|None, float|None], optional
+        Limit of the y-axis.
     
-    months: list[int|str], default=["*"], optional
-        Months to load from the dataset, as integers or strings (e.g., range(1, 5) or ["1"]).
-        Use ["*"] to load all months (1-12) as it uses a glob pattern.
+    xticks: int | tuple[float, float] | list[float], optional
+        Defines the ticks of the x-axis.
+        - Giving an int will use a `MaxNLocator`.
+        - Giving a tuple will use a `MultipleLocator`, the first float being the base and the second the offset.
+        - Giving a list of float will use a `FixedLocator` with the values given.
     
-    time_selector: str | slice[str] | None, default=None, optional
-        Time selection applied using xarray's `.sel()`. Can be a string (e.g., "1993-01-21") or a slice
-        (e.g., slice("1993-01-21", "1993-01-25")). If None, no time filtering is applied.
+    xticks_minor: int | tuple[float, float] | list[float], optional
+        Defines the ticks of the x-axis.
+        - Giving an int will use a `AutoMinorLocator`.
+        - Giving a tuple will use a `MultipleLocator`, the first float being the base and the second the offset.
+        - Giving a list of float will use a `FixedLocator` with the values given.
     
-    lon_selector: float | slice[float] | None, default=None, optional
-        Longitude selector applied using xarray's `.sel()`. Accepts a float or a slice.
+    yticks: int | tuple[float, float] | list[float], optional
+        Defines the ticks of the y-axis.
+        - Giving an int will use a `MaxNLocator`.
+        - Giving a tuple will use a `MultipleLocator`, the first float being the base and the second the offset.
+        - Giving a list of float will use a `FixedLocator` with the values given.
     
-    lat_selector: float | slice[float] | None, default=None, optional
-        Latitude selector applied using xarray's `.sel()`. Accepts a float or a slice.
+    yticks_minor: int | tuple[float, float] | list[float], optional
+        Defines the ticks of the y-axis.
+        - Giving an int will use a `AutoMinorLocator`.
+        - Giving a tuple will use a `MultipleLocator`, the first float being the base and the second the offset.
+        - Giving a list of float will use a `FixedLocator` with the values given.
     
-    only_sst: bool, default=False, optional
-        If True, all other variables than SST will be discarded.
+    xticks_formatter: plt.Formatter, optional
+        Formatter to use for the x-axis ticks.
     
-    Returns
-    ----------
-    ds_cmems_sst: xr.Dataset
-        The loaded CMEMS-SST dataset with optional spatio-temporal subsetting.
+    yticks_formatter: plt.Formatter, optional
+        Formatter to use for the y-axis ticks.
+    
+    bottom_labels: bool, default=True
+        Defines if the labels of the bottom ticks should be displayed or not.
+    
+    left_labels: bool, default=True
+        Defines if the labels of the left ticks should be displayed or not.
+    
+    top_labels: bool, default=False
+        Defines if the labels of the top ticks should be displayed or not.
+    
+    show_plots: bool, default=False
+        Defines if showing the figure after plotting.
+    
+    save_plot: bool, default=False
+        Defines if saving the figure after plotting.
+    
+    save_path: bool, default=False
+        Defines the path to which save the figure
     """
 
     # Apply fontsize globally
@@ -1089,41 +1136,42 @@ def plot_vertical_mean(
     
     return fig, ax
 
+
+
 def plot_timeserie(
         # Parameter of data
         times: Dict[str, xr.DataArray] | xr.DataArray,
         vars: Dict[str, xr.DataArray] | xr.DataArray,
-        vars_stds: Optional[Dict[str, xr.DataArray] | xr.DataArray] = None,
         labels: Optional[Dict[str, str] | str] = 'auto',
         colors: Optional[Dict[str, str] | str] = None,
         ls: Optional[Dict[str, str] | str] = None,
-        nans_to_zero: bool = False,
 
         # Parameter of figure
         fig: Optional[plt.Figure] = None,
         ax: Optional[plt.Axes] = None,
         figsize: Tuple[int, int] = (18, 5),
-        figdpi: float = 100,
+        figdpi: float = 200,
 
         # Parameter of text
         fontsize: int = 14,
         title: Optional[str] = None,
-        ylabel: Optional[str] = None,
         xlabel: Optional[str] = None,
+        ylabel: Optional[str] = None,
+        texts: list[dict] = [],
+        legend: bool | dict = True,
 
         # Parameters of graph
         grid: bool = True,
+        nans_to_zero: bool = False,
         xlim: tuple[int|None, int|None] = (None, None),
         ylim: tuple[int|None, int|None] = (None, None),
-        xticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
-        xticks_minor = None,
-        yticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
-        yticks_minor = None,
-        yticks_formatter = None,
+        xticks: Optional[int | Tuple[float, float] | List[float]] = None,
+        xticks_minor: Optional[int | Tuple[float, float] | List[float]] = None,
+        yticks: Optional[int | Tuple[float, float] | List[float]] = None,
+        yticks_minor: Optional[int | Tuple[float, float] | List[float]] = None,
+        yticks_formatter: plt.Formatter = None,
         bottom_labels: bool = True,
         left_labels: bool = True,
-        texts: list[dict] = [],
-        legend: bool | dict = True,
 
         # Parameter for saving the figure
         show_plots: bool = False,
@@ -1133,81 +1181,137 @@ def plot_timeserie(
         **kwargs
 ):
     """
-    Plots a time serie with the defined settings.
+    Plots 1D data (time) as a line plot.
 
     Parameters
     ----------
-    vars: dict[str, xr.DataArray]
-        Dictionary attributing to a name a data array representing the variable to plot.
+    times: dict[str, xr.DataArray] | xr.DataArray
+        Dictionary attributing to a name a data array representing the time array associated with the variable to plot. For plotting only one variable, a single DataArray can be passed.
     
-    times: dict[str, xr.DataArray]
-        Dictionary attributing to a name a data array representing the time array associated with the variable to plot.
+    vars: dict[str, xr.DataArray] | xr.DataArray
+        Dictionary attributing to a name a data array representing the variable data to plot. For plotting only one variable, a single DataArray can be passed.
     
-    vars_stds: dict[str, xr.DataArray] | None, default=None
-        Dictionary attributing to a name a data array representing the std array associated with the variable to plot.
+    labels: dict[str, str] | str, optional
+        Dictionary attributing to a name the labels to assign to the variable to plot. Pass a single value to apply it to all variables.
     
-    labels: dict[str, str] | None, default=None
-        Dictionary attributing to a name the label to assign to the variable to plot.
+    colors: dict[str, str] | str, optional
+        Dictionary attributing to a name the color to assign to the variable to plot. Pass a single value to apply it to all variables. Can be 'black', 'r'...
     
-    colors: dict[str, str] | None, default=None
-        Dictionary attributing to a name the color to assign to the variable to plot.
+    ls: dict[str, str], optional
+        Dictionary attributing to a name the color to assign to the variable to plot. Pass a single value to apply it to all variables. Can be '-', '--', '-.'...
     
-        
-    fig: plt.Figure | None, default=None
-        Figure to use if previously created. None value will create a new figure only if ax is None.
-        If ax is not None, no new figure will be created.
+    fig: plt.Figure, optional
+        If created beforehand, the figure to plot on. Otherwise, a new figure is created.
     
-    ax: plt.Axes | None, default=None
-        Axes to use if previously created. None value will create a new axes.
+    ax: plt.Axes, optional
+        If created beforehand, the axe to plot on. Otherwise, a new axe is created.
     
-    figsize: tuple[int, int], default=(18, 5)
-        Figure size to use if creating a new figure.
+    figsize: tuple[float, float], default=(18, 5)
+        If creating a new figure, (width, height) of the figure in inches.
     
+    figdpi: float, default=200   
+        The resolution of the figure in dots-per-inch.
     
-    fontsize: int = 14
-        Font size to be used in the plot.
+    fontsize: int, default=14
+        Fontsize that will be applied to the plot.
 
-    title: str|None = None,
-    unit: str|None = None,
+    title: str, optional
+        Title of the axe.
+    
+    xlabel: str, optional
+        Label for the x-axis. Can be "Time".
+    
+    ylabel: str, optional
+        Label for the y-axis. Can be "Total days [days]".
+    
+    texts: list[dict], optional
+        For each dictionnary of this variable, a text will be added to the plot as: `ax.text(transform=ax.transAxes, **text)`. Can be for example
+        ```
+            texts = {
+                'x': 0.98,
+                'y': 0.04,
+                's': "1)",
+                'ha': 'right',
+                'va': 'bottom',
+                'fontsize': 18
+            }
+        ```
+    
+    legend: bool | dict, default=True
+        If True, will add a legend to the plot. If a dict, a legend will be added as: `ax.legend(**legend)`. Can be for example
 
-    # Axe options
-    grid: bool = True,
-    xlim: tuple = (None, None),
-    ylim: tuple = (None, None),
+        ```
+            from matplotlib.patches import Patch
 
-    # Saving options
-    save_plot: bool = False,
-    save_path: str = "",
+            legend = {
+                'handles': [
+                    Patch(color='C0'),
+                    Patch(color='C1'),
+                    Patch(color='C2'),
+                    Patch(color='C3'),
+                ],
+                'labels': ["SPC", "BIC", "BS", "NWA"],
+                'loc': 'lower right',
+                'handlelength': 0.7,
+                'handletextpad': 0.4,
+                'fontsize': 18,
+            }
+        ```
 
-    years: list[int|str], default=["*"], optional
-        Years to load from the dataset, as integers or strings (e.g., range(1983, 1985) or ["1983"]).
-        Use ["*"] to load all available years (1982-2023) as it uses a glob pattern.
+    grid: bool, default=True
+        Add grid lines to the plot
+
+    nans_to_zero: bool, default=False
+        Changes every nan values of the data into zeros before plotting.
+
+    xlim: tuple[float|None, float|None], optional
+        Limit of the x-axis.
+
+    ylim: tuple[float|None, float|None], optional
+        Limit of the y-axis.
     
-    months: list[int|str], default=["*"], optional
-        Months to load from the dataset, as integers or strings (e.g., range(1, 5) or ["1"]).
-        Use ["*"] to load all months (1-12) as it uses a glob pattern.
+    xticks: int | tuple[float, float] | list[float], optional
+        Defines the ticks of the x-axis.
+        - Giving an int will use a `MaxNLocator`.
+        - Giving a tuple will use a `MultipleLocator`, the first float being the base and the second the offset.
+        - Giving a list of float will use a `FixedLocator` with the values given.
     
-    time_selector: str | slice[str] | None, default=None, optional
-        Time selection applied using xarray's `.sel()`. Can be a string (e.g., "1993-01-21") or a slice
-        (e.g., slice("1993-01-21", "1993-01-25")). If None, no time filtering is applied.
+    xticks_minor: int | tuple[float, float] | list[float], optional
+        Defines the ticks of the x-axis.
+        - Giving an int will use a `AutoMinorLocator`.
+        - Giving a tuple will use a `MultipleLocator`, the first float being the base and the second the offset.
+        - Giving a list of float will use a `FixedLocator` with the values given.
     
-    lon_selector: float | slice[float] | None, default=None, optional
-        Longitude selector applied using xarray's `.sel()`. Accepts a float or a slice.
+    yticks: int | tuple[float, float] | list[float], optional
+        Defines the ticks of the y-axis.
+        - Giving an int will use a `MaxNLocator`.
+        - Giving a tuple will use a `MultipleLocator`, the first float being the base and the second the offset.
+        - Giving a list of float will use a `FixedLocator` with the values given.
     
-    lat_selector: float | slice[float] | None, default=None, optional
-        Latitude selector applied using xarray's `.sel()`. Accepts a float or a slice.
+    yticks_minor: int | tuple[float, float] | list[float], optional
+        Defines the ticks of the y-axis.
+        - Giving an int will use a `AutoMinorLocator`.
+        - Giving a tuple will use a `MultipleLocator`, the first float being the base and the second the offset.
+        - Giving a list of float will use a `FixedLocator` with the values given.
     
-    only_sst: bool, default=False, optional
-        If True, all other variables than SST will be discarded.
+    yticks_formatter: plt.Formatter, optional
+        Formatter to use for the y-axis ticks.
     
-    Returns
-    ----------
-    ds_cmems_sst: xr.Dataset
-        The loaded CMEMS-SST dataset with optional spatio-temporal subsetting.
+    bottom_labels: bool, default=True
+        Defines if the labels of the bottom ticks should be displayed or not.
+    
+    left_labels: bool, default=True
+        Defines if the labels of the left ticks should be displayed or not.
+    
+    show_plots: bool, default=False
+        Defines if showing the figure after plotting.
+    
+    save_plot: bool, default=False
+        Defines if saving the figure after plotting.
+    
+    save_path: bool, default=False
+        Defines the path to which save the figure
     """
-
-    # min_date = np.min([ds_vars["time"][0] for ds_vars in datasets_vars])
-    # max_date = np.min([ds_vars["time"][-1] for ds_vars in datasets_vars])
 
     with plt.rc_context({'font.size': fontsize}):
         # Plotting
@@ -1217,11 +1321,6 @@ def plot_timeserie(
         
         # Should handle single dataset plotting
         if isinstance(vars, dict):
-            first_var = vars[next(iter(vars))]
-
-            # if unit == None and isinstance(first_var, xr.DataArray) and first_var.attrs.get("unit"):
-            #     unit = first_var.attrs.get("unit")
-            
             for var in vars:
                 opts_args = {}
 
@@ -1368,15 +1467,13 @@ def plot_bars(
         grid: bool = True,
         nans_to_zero: bool = False,
         xlim: Tuple[Optional[float], Optional[float]] = (None, None),
-        xticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
+        xticks: Optional[int | Tuple[float, float] | List[float]] = None,
         xticks_minor = None,
-        yticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
-        yticks_minor = None,
+        yticks: Optional[int | Tuple[float, float] | List[float]] = None,
         xticks_formatter = None,
         bottom_labels: bool = True,
         left_labels: bool = True,
         top_labels: bool = False,
-        legend: bool = True,
         bars_pad: float = 2,
 
         # Parameter for saving the figure
@@ -1386,6 +1483,120 @@ def plot_bars(
 
         **kwargs
 ):
+    """
+    Plots 1D data (depth) as a bar plot.
+
+    Parameters
+    ----------
+    depths: xr.DataArray
+        A DataArray representing the depth array associated with the variables to plot.
+
+    vars: dict[str, xr.DataArray]
+        Dictionary attributing to a name a data array representing the variable data to plot. The DataArray must have a `'depth'` dimension matching `depths`.
+    
+    stds: dict[str, xr.DataArray] | str, optional
+        Dictionary attributing to a name the std array to assign to the variable to plot.
+    
+    colors: dict[str, str] | str, optional
+        Dictionary attributing to a name the color to assign to the variable to plot. Pass a single value to apply it to all variables. Can be 'black', 'r'...
+    
+    ls: dict[str, str] | str, optional
+        Dictionary attributing to a name the color to assign to the variable to plot. Pass a single value to apply it to all variables. Can be '-', '--', '-.'...
+    
+    hatch: dict[str, dict[float, str]] | dict[str, str] | str, optional
+        Can be:
+        - Dictionary attributing to a name (variable) the array giving for the hatch to assign for every depth.
+        - Dictionary attributing to a name the hatch to assign to the variable to plot.
+        - Pass a single value to apply it to all variables.
+
+        Can be '//', 'x'...
+    
+    fig: plt.Figure, optional
+        If created beforehand, the figure to plot on. Otherwise, a new figure is created.
+    
+    ax: plt.Axes, optional
+        If created beforehand, the axe to plot on. Otherwise, a new axe is created.
+    
+    figsize: tuple[float, float], default=(10, 6)
+        If creating a new figure, (width, height) of the figure in inches.
+    
+    figdpi: float, default=100   
+        The resolution of the figure in dots-per-inch.
+    
+    fontsize: int, default=14
+        Fontsize that will be applied to the plot.
+
+    title: str, optional
+        Title of the axe.
+    
+    xlabel: str, optional
+        Label for the x-axis. Can be "Time".
+    
+    ylabel: str, optional
+        Label for the y-axis. Can be "Total days [days]".
+    
+    texts: list[dict], optional
+        For each dictionnary of this variable, a text will be added to the plot as: `ax.text(transform=ax.transAxes, **text)`. Can be for example
+        ```
+            texts = {
+                'x': 0.98,
+                'y': 0.04,
+                's': "1)",
+                'ha': 'right',
+                'va': 'bottom',
+                'fontsize': 18
+            }
+        ```grid: bool, default=True
+        Add grid lines to the plot
+
+    nans_to_zero: bool, default=False
+        Changes every nan values of the data into zeros before plotting.
+
+    xlim: tuple[float|None, float|None], optional
+        Limit of the x-axis.
+
+    xticks: int | tuple[float, float] | list[float], optional
+        Defines the ticks of the x-axis.
+        - Giving an int will use a `MaxNLocator`.
+        - Giving a tuple will use a `MultipleLocator`, the first float being the base and the second the offset.
+        - Giving a list of float will use a `FixedLocator` with the values given.
+    
+    xticks_minor: int | tuple[float, float] | list[float], optional
+        Defines the ticks of the x-axis.
+        - Giving an int will use a `AutoMinorLocator`.
+        - Giving a tuple will use a `MultipleLocator`, the first float being the base and the second the offset.
+        - Giving a list of float will use a `FixedLocator` with the values given.
+    
+    yticks: int | tuple[float, float] | list[float], optional
+        Defines the ticks of the y-axis.
+        - Giving an int will use a `MaxNLocator`.
+        - Giving a tuple will use a `MultipleLocator`, the first float being the base and the second the offset.
+        - Giving a list of float will use a `FixedLocator` with the values given.
+    
+    xticks_formatter: plt.Formatter, optional
+        Formatter to use for the x-axis ticks.
+    
+    bottom_labels: bool, default=True
+        Defines if the labels of the bottom ticks should be displayed or not.
+    
+    left_labels: bool, default=True
+        Defines if the labels of the left ticks should be displayed or not.
+    
+    top_labels: bool, default=True
+        Defines if the labels of the left ticks should be displayed or not.
+    
+    bars_pad: float, default=2
+        Space added between each depth levels.
+    
+    show_plots: bool, default=False
+        Defines if showing the figure after plotting.
+    
+    save_plot: bool, default=False
+        Defines if saving the figure after plotting.
+    
+    save_path: bool, default=False
+        Defines the path to which save the figure
+    """
     
     if not colors:
         colors = {
@@ -1393,7 +1604,6 @@ def plot_bars(
             for i, var in enumerate(vars)
         }
 
-    
     # Apply fontsize globally
     with plt.rc_context({'font.size': fontsize}):
         # If the figure is not configured, initialise a new one
@@ -1599,29 +1809,50 @@ def plot_bars(
             plt.close("all")
     
     return fig, ax
-    
+
+
 
 def get_locator_from_ticks(
-        ticks: Optional[int | Tuple[float, float] | List[float] | List[List[float]|List[str]]] = None,
+        ticks: Optional[int | Tuple[float, float] | List[float]] = None,
         which: str = "major",
 ):
     """
+    Helper function that return a matplotlib Locator from a giving ticks parameter.
+
+    Parameters
+    ----------
+    xticks: int | tuple[float, float] | list[float], optional
+        Defines the ticks of the x-axis.
+        - Giving an int will use a `MaxNLocator` or a `AutoMinorLocator`, depending on `which`.
+        - Giving a tuple will use a `MultipleLocator`, the first float being the base and the second the offset.
+        - Giving a list of float will use a `FixedLocator` with the values given.
     
+    which: str, default='major'
+        If `ticks` is an int, assign either `MaxNLocator` (if major) or  `AutoMinorLocator` (if minor).
+
+    Returns
+    -------
+    locator: matplotlib.ticker.Locator
+        A matplotlib Locator.
     """
     
+    # If an int passed
     if isinstance(ticks, int):
         if which == "major":
             return MaxNLocator(nbins=ticks)
         elif which == "minor":
             return AutoMinorLocator(ticks)
     
+    # If a tuple passed
     elif isinstance(ticks, tuple):
         if len(ticks) == 2:
             return MultipleLocator(base=ticks[0], offset=ticks[1])
         else:
             return MultipleLocator(base=ticks[0])
     
+    # If a list passed
     elif isinstance(ticks, list):
         return FixedLocator(ticks)
 
+    # Not found locator
     return MaxNLocator()

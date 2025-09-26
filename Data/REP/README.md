@@ -22,13 +22,15 @@ However, to download it manually, here is how:
 
  4. (Optional) Structure the data under the following data structure to be used directly with the code provided here. If the data structure is modified, please modify the `Code/pyscripts/load_save_dataset.py` folder paths.
 
- > `REP/` <br>
- >  └─ MEDITERRANEAN/SST-L4-REP-HR/DATA-NEW/DAILY/ <br>
- >    ├─ 1982/ <br>
- >    │  ├─ SST_MED_SST_L4_REP_OBSERVATIONS_010_021_y1982m01.nc <br>
- >    │  └─ ... <br>
- >    ├─ 1983/ <br>
- >    └─ ... <br>
+```
+REP/
+└── MEDITERRANEAN/SST-L4-REP-HR/DATA-NEW/DAILY/
+    ├── 1982/
+    │   ├── SST_MED_SST_L4_REP_OBSERVATIONS_010_021_y1982m01.nc
+    │   └── ...
+    ├── 1983/
+    └── ...
+```
 
 ## Overview
 

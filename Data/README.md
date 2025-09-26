@@ -30,34 +30,37 @@ In order to use the code without any modifications, the Data folder must be prov
 
 The expected file tree inside the Data folder should be as follow:
 
-> `Data/`
-> > `bathymetry/` <br>
-> >  ├─ Bathymetry_GEBCO_2023_IBERIAN.nc <br>
-> >  └─ Bathymetry_MEDREA_006_004_mask_bathy_BalearicIslands.nc <br>
->
-> > `REP/` <br>
-> >  └─ MEDITERRANEAN/SST-L4-REP-HR/DATA-NEW/DAILY/ <br>
-> >    ├─ 1982/ <br>
-> >    │  ├─ SST_MED_SST_L4_REP_OBSERVATIONS_010_021_y1982m01.nc <br>
-> >    │  └─ ... <br>
-> >    ├─ 1983/ <br>
-> >    └─ ... <br>
->
-> > `MEDREA/` <br>
-> >  └─ MEDITERRANEAN/REANALYSIS/DATA/DAILY/BalearicIslands/ <br>
-> >    ├─ 1987/ <br>
-> >    │  ├─ TEMP_MEDSEA_MULTIYEAR_PHY_006_004_y1987m01_BalearicIslands.nc <br>
-> >    │  └─ ... <br>
-> >    ├─ 1988/ <br>
-> >    └─ ... <br>
->
-> > `mhws/` <br>
-> >  ├─ yearly/ <br>
-> >  │  ├─ rep_mhws_balears_1987_2021.nc <br>
-> >  │  └─ medrea_mhws_balears_1987_2021.nc <br>
-> >  └─ all_events/ <br>
-> >     ├─ rep_mean_mhws_balears_1987_2021.nc <br>
-> >     └─ medrea_mean_mhws_balears_1987_2021.nc <br>
+```
+Data/
+├── bathymetry/
+│   ├── Bathymetry_GEBCO_2023_IBERIAN.nc
+│   └── Bathymetry_MEDREA_006_004_mask_bathy_BalearicIslands.nc
+│
+├── REP/
+│   └── MEDITERRANEAN/SST-L4-REP-HR/DATA-NEW/DAILY/
+│       ├── 1982/
+│       │   ├── SST_MED_SST_L4_REP_OBSERVATIONS_010_021_y1982m01.nc
+│       │   └── ...
+│       ├── 1983/
+│       └── ...
+│
+├── MEDREA/
+│   └── MEDITERRANEAN/REANALYSIS/DATA/DAILY/BalearicIslands/
+│       ├── 1987/
+│       │   ├── TEMP_MEDSEA_MULTIYEAR_PHY_006_004_y1987m01_BalearicIslands.nc
+│       │   └── ...
+│       ├── 1988/
+│       └── ...
+│
+└── mhws/
+    ├── yearly/
+    │   ├── rep_mhws_balears_1987_2021.nc
+    │   └── medrea_mhws_balears_1987_2021.nc
+    │
+    └── all_events/
+        ├── rep_mean_mhws_balears_1987_2021.nc
+        └── medrea_mean_mhws_balears_1987_2021.nc
+```
 
 ## License
 
